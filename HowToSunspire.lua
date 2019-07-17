@@ -113,20 +113,27 @@ function HowToSunspire.PortalTimerUI()
 end
 
 function HowToSunspire.IsDownstair()
+    local boss = 0
     for i = 1, MAX_BOSSES do
         if DoesUnitExist("boss" .. i) then --when you are down
-            d("DownStair")
-            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
-            EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsDownstair", EVENT_SYNERGY_ABILITY_CHANGED)
-
-            EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT)
-            EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT, HowToSunspire.IsUpstair) --return to reality
-            EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 121254) 
-
-            EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT)
-            EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT, HowToSunspire.InterruptDown) --interrupt thing
-            EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 121436) 
+            boss = boss + 1
         end
+    end
+
+    if boss == 0 then
+        d("DownStair")
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsDownstair", EVENT_SYNERGY_ABILITY_CHANGED)
+
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT)
+        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT, HowToSunspire.IsUpstair) --return to reality
+        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 121254) 
+
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT)
+        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT, HowToSunspire.InterruptDown) --interrupt thing
+        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 121436) 
+    else
+        d("NmbBoss: " .. boss)
     end
 end
 
@@ -245,9 +252,20 @@ function HowToSunspire.OnPlayerActivated()
 
 end
 
---function HowToSunspire.Test()
---    d("test")
---end
+local cptSaved = 0
+function HowToSunspire.Test()
+    local cpt = 0
+    for i = 1, MAX_BOSSES do
+        if DoesUnitExist("boss" .. i) then
+            cpt = cpt + 1
+        end
+    end
+    if cpt ~= cptSaved then
+        cptSaved = cpt
+        d("|cFF0000Boss Changed|r")
+        PlaySound(SOUNDS.TELVAR_GAINED)
+    end
+end
 
 function HowToSunspire:Initialize()
 	--Saved Variables
@@ -262,7 +280,7 @@ function HowToSunspire:Initialize()
     EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Activated", EVENT_PLAYER_ACTIVATED, HowToSunspire.OnPlayerActivated)
     
     --Test
-    --EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Test", EVENT_COMBAT_EVENT, HowToSunspire.Test)
+    --EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Test", EVENT_BOSSES_CHANGED, HowToSunspire.Test)
 	--EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Test", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_DIED)
 
 	EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name, EVENT_ADD_ON_LOADED)
