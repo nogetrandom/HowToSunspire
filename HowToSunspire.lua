@@ -79,7 +79,7 @@ end
 ------------------------
 ---- LAST DOWNSTAIR ----
 ------------------------
-local portalTime = nil
+local portalTime
 function HowToSunspire.Portal(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.Portal == true then
         --add the HA timer to the table
@@ -104,7 +104,7 @@ function HowToSunspire.PortalTimerUI()
     local timer = portalTime - currentTime
 
     if timer >= 0 then
-        Hts_Down:SetText("|c7fffd4Portal: |r" .. tostring(string.format("%.0f", timer)))
+        Hts_Down_Label:SetText("|c7fffd4Portal: |r" .. tostring(string.format("%.0f", timer)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsDownstair", EVENT_SYNERGY_ABILITY_CHANGED)
@@ -148,8 +148,8 @@ function HowToSunspire.IsUpstair()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
 end
 
-local interruptTime = nil
-local interruptUnitId = nil
+local interruptTime
+local interruptUnitId
 function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if result == ACTION_RESULT_BEGIN then
         --add the HA timer to the table
@@ -175,14 +175,14 @@ function HowToSunspire.InterruptTimerUI()
     local timer = portalTime - currentTime
 
     if timer >= 0 then
-        Hts_Down:SetText("|c7fffd4Interrupt: |r" .. tostring(string.format("%.1f", timer / 1000)))
+        Hts_Down_Label:SetText("|c7fffd4Interrupt: |r" .. tostring(string.format("%.1f", timer / 1000)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
         Hts_Down:SetHidden(true)
     end
 end
 
-local pinsTime = nil
+local pinsTime
 function HowToSunspire.PinsDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if interruptUnitId == targetUnitId then
         interruptUnitId = nil
@@ -202,7 +202,7 @@ function HowToSunspire.PinsTimerUI()
     local timer = portalTime - currentTime
 
     if timer >= 0 then
-        Hts_Down:SetText("|c7fffd4Next Pins: |r" .. tostring(string.format("%.0f", timer)))
+        Hts_Down_Label:SetText("|c7fffd4Next Pins: |r" .. tostring(string.format("%.0f", timer)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
         Hts_Down:SetHidden(true)
