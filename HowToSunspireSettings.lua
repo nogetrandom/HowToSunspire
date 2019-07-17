@@ -23,12 +23,16 @@ function HowToSunspire.CreateSettingsWindow()
 
 	local sV = HowToSunspire.savedVariables
 	local optionsData = {
+		{
+			type = "header",
+			name = "Heavy Attacks",
+		},
 		{	type = "description",
-			text = " ",
+			text = "To track all major heavy attacks in sunspire.\nIt include HA from all dragons, 1H & Shield, hulks on last boss, and cone of the add downstair on last boss.",
 		},
 		{	type = "checkbox",
-			name = "Unlock Heavy Attack",
-			tooltip = "Use it to set the position of the Heavy Attack timer text.",
+			name = "Unlock HA",
+			tooltip = "Use it to set the position of the Heavy Attacks timer text.",
 			default = false,
 			getFunc = function() return Unlock.HA end,
 			setFunc = function(newValue)
@@ -37,30 +41,34 @@ function HowToSunspire.CreateSettingsWindow()
 			end,
 		},
 		{	type = "checkbox",
-			name = "Enable Heavy Attack Tracking",
-			tooltip = "To enable or not the tracking of Heavy Attack from statue.",
+			name = "Enable HA Tracking",
+			tooltip = "To enable or not the tracking of Heavy Attacks.",
 			default = true,
 			getFunc = function() return sV.Enable.HA end,
 			setFunc = function(newValue)  
 				sV.Enable.HA = newValue
 			end,
 		},
+		{
+			type = "header",
+			name = "Downstair Notifications",
+		},
 		{	type = "description",
-			text = " ",
+			text = "To track when portal spawn, and then if you are downstair you will trak interrupt to do on the add and when the next pins are going to hit.\nFor now you can't enable or disable tracking of the specific notification, you got two choice : tracking portal + interrupt + pins, or tracking none of them.",
 		},
 		{	type = "checkbox",
-			name = "Unlock Portals Notifications",
-			tooltip = "Use it to set the position of the all the Portals Notifications.",
+			name = "Unlock Portals Notif",
+			tooltip = "Use it to set the position of all the Portals Notifications.",
 			default = false,
 			getFunc = function() return Unlock.Portal end,
 			setFunc = function(newValue)
 				Unlock.Portal = newValue
-				Hts_Ha:SetHidden(not newValue)  
+				Hts_Down:SetHidden(not newValue)  
 			end,
 		},
 		{	type = "checkbox",
-			name = "Enable All Portals Notifications",
-			tooltip = "To enable or not the tracking of portal, pins, interrupt.",
+			name = "Enable All Portals Notif",
+			tooltip = "To enable or not the tracking of downstair relative mechanics.",
 			default = true,
 			getFunc = function() return sV.Enable.Portal end,
 			setFunc = function(newValue)  

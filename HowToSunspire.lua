@@ -18,7 +18,7 @@ HowToSunspire.Default = {
     },
     OffsetY = {
         HA = 0,
-        Portal = 100,
+        Portal = 60,
     },
     Enable = {
         HA = true,
@@ -81,7 +81,7 @@ end
 ------------------------
 local portalTime = nil
 function HowToSunspire.Portal(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
-    if result == ACTION_RESULT_BEGIN then
+    if result == ACTION_RESULT_BEGIN and sV.Enable.Portal == true then
         --add the HA timer to the table
         portalTime = GetGameTimeMilliseconds() / 1000 + 14
 
@@ -206,10 +206,14 @@ end
 ---- INIT ----
 --------------
 function HowToSunspire.InitUI()
-    --heavy attacks
+    
     Hts_Ha:SetHidden(true)
-	Hts_Ha:ClearAnchors()
-    if (sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA) and (sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA) then 
+    Hts_Down:SetHidden(true)
+    Hts_Ha:ClearAnchors()
+    Hts_Down:ClearAnchors()
+    
+    --heavy attacks
+    if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
         --recover last position
 		Hts_Ha:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.HA, sV.OffsetY.HA)
     else 
@@ -218,14 +222,10 @@ function HowToSunspire.InitUI()
     end
 
     --all portal related notifications
-    Hts_Down:SetHidden(true)
-	Hts_Down:ClearAnchors()
-    if (sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.Portal) and (sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.Portal) then 
-        --recover last position
-		Hts_Ha:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.Portal, sV.OffsetY.Portal)
+    if sV.OffsetX.Portal ~= HowToSunspire.Default.OffsetX.Portal and sV.OffsetY.Portal ~= HowToSunspire.Default.OffsetY.Portal then 
+		Hts_Down:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.Portal, sV.OffsetY.Portal)
     else 
-        --initial position (center)
-		Hts_Ha:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Portal, sV.OffsetY.Portal)
+		Hts_Down:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Portal, sV.OffsetY.Portal)
     end
     
 end
