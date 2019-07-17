@@ -1,0 +1,31 @@
+<GuiXml>
+    <Controls>
+
+        <TopLevelControl name="Hts_Ha" resizeToFitDescendents="true" mouseEnabled="true" movable="true" clampedToScreen="true">
+            <Dimensions x="300" y="60" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="0" />
+            <OnMoveStop>
+				HowToSunspire.SaveLoc_HA()
+			</OnMoveStop>
+            <Controls>
+                <Label name="$(parent)_Label" width="200" height="40" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" inheritAlpha="true" color="FFFFFF" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="|cff1493HA:|r 0.9 |cff1493/|r 0.4">
+                    <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
+                </Label>
+            </Controls>			
+        </TopLevelControl>
+
+        <TopLevelControl name="Hts_Down" resizeToFitDescendents="true" mouseEnabled="true" movable="true" clampedToScreen="true">
+            <Dimensions x="300" y="60" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="100" />
+            <OnMoveStop>
+				HowToSunspire.SaveLoc_Down()
+			</OnMoveStop>
+            <Controls>
+                <Label name="$(parent)_Label" width="200" height="40" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" inheritAlpha="true" color="FFFFFF" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="|c7fffd4Portal: |r 11">
+                    <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
+                </Label>
+            </Controls>			
+        </TopLevelControl>
+
+    </Controls>
+</GuiXml>
