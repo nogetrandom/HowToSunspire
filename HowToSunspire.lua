@@ -79,7 +79,7 @@ end
 ------------------------
 ---- LAST DOWNSTAIR ----
 ------------------------
-local portalTime
+local portalTime = nil
 function HowToSunspire.Portal(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN then
         --add the HA timer to the table
@@ -141,18 +141,20 @@ function HowToSunspire.IsUpstair()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
 end
 
-local interruptTime
-function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+local interruptTime = nil
+local interruptUnitId = nil
+function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if result == ACTION_RESULT_BEGIN then
         --add the HA timer to the table
         interruptTime = GetGameTimeMilliseconds() + hitValue
+        interruptUnitId = targetUnitId
 
         --run all UI functions for HA
         HowToSunspire.InterruptTimerUI()
         Hts_Down:SetHidden(false)
 
 		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
-        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "InterruptTimer", 100, HowToSunspire.PortalTimerUI)
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "InterruptTimer", 100, HowToSunspire.InterruptTimerUI)
 
         --register for when it is bashed
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
@@ -173,16 +175,19 @@ function HowToSunspire.InterruptTimerUI()
     end
 end
 
-local pinsTime
-function HowToSunspire.PinsDown()
-    pinsTime = GetGameTimeMilliseconds() / 1000 + 20
+local pinsTime = nil
+function HowToSunspire.PinsDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
+    if interruptUnitId == targetUnitId then
+        interruptUnitId = nil
+        pinsTime = GetGameTimeMilliseconds() / 1000 + 20
 
-    --run all UI functions for HA
-    HowToSunspire.PinsTimerUI()
-    Hts_Down:SetHidden(false)
+        --run all UI functions for HA
+        HowToSunspire.PinsTimerUI()
+        Hts_Down:SetHidden(false)
 
-    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
-    EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "PinsTimer", 1000, HowToSunspire.PinsTimerUI)
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "PinsTimer", 1000, HowToSunspire.PinsTimerUI)
+    end
 end
 
 function HowToSunspire.PinsTimerUI()
