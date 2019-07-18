@@ -68,7 +68,7 @@ function HowToSunspire.CreateSettingsWindow()
 			end,
 		},
 		{	type = "checkbox",
-			name = "Enable Portal",
+			name = "Enable Ice Tomb",
 			tooltip = "To enable or not the tracking of when Ice Tomb spawn and how many time is remaining to take it.",
 			default = true,
 			getFunc = function() return sV.Enable.IceTomb end,
