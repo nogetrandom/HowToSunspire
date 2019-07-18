@@ -8,6 +8,8 @@ HowToSunspire.AbilitiesToTrack = {
     [115443] = HowToSunspire.HeavyAttack, --HA from nahvin
     [121422] = HowToSunspire.HeavyAttack, --HA from cone downstair
     [117071] = HowToSunspire.HeavyAttack, --HA from 1H & Shield
+
+    [119632] = HowToSunspire.IceTomb, --ice tomb on first boss
     
     [121676] = HowToSunspire.Portal, --Portal on last boss
     [121216] = HowToSunspire.IsDownstair, --Portal used

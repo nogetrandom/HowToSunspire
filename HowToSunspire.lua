@@ -15,16 +15,19 @@ HowToSunspire.Default = {
     OffsetX = {
         HA = 0,
         Portal = 0,
+        IceTomb = 0,
     },
     OffsetY = {
         HA = 0,
         Portal = 60,
+        IceTomb = -60,
     },
     Enable = {
         HA = true,
         Portal = true,
         Interrupt = true,
         Pins = true,
+        IceTomb = true,
     }
 }
 
@@ -75,6 +78,52 @@ function HowToSunspire.HeavyAttackUI()
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
         Hts_Ha:SetHidden(true)
+    end
+end
+
+--------------------
+---- LOKKESTIIZ ----
+--------------------
+local iceNumber = 1
+local prevIce = 0
+local iceTimer
+function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.IceTomb == true then
+        local currentTime = GetGameTimeMilliseconds();
+        local timeSincePrev = currentTime - prevIce
+        iceTimer = currentTime / 1000 + 13
+
+        if timeSincePrev >= 70000 or (timeSincePrev >= 60000 and iceNumber ~= 2) then
+            iceNumber = 1
+        end
+        prevIce = currentTime
+
+        HowToSunspire.IceTombTimerUI()
+        Hts_Ice:SetHidden(false)
+        PlaySound(SOUNDS.DUEL_START)
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "IceTombTimer", 100, HowToSunspire.PortalTimerUI)
+    end
+end
+
+function HowToSunspire.IceTombTimerUI()
+    local currentTime = GetGameTimeMilliseconds() / 1000
+    local timer = iceTimer - currentTime
+
+    if timer > 9 then
+        Hts_Ice_Label:SetText("|c00ffffIce " .. iceNumber .. " in: |r" .. tostring(string.format("%.1f", timer - 9)))
+    elseif timer >= 0 then 
+        Hts_Ice_Label:SetText("|c00ffffIce " .. iceNumber .. " remain: |r" .. tostring(string.format("%.0f", timer)))
+    else
+        if iceNumber == 3 then
+            iceNumber = 1
+        else
+            iceNumber = iceNumber + 1
+        end
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
+        Hts_Ice:SetHidden(true)
     end
 end
 
@@ -206,8 +255,10 @@ function HowToSunspire.InitUI()
     
     Hts_Ha:SetHidden(true)
     Hts_Down:SetHidden(true)
+    Hts_Ice:SetHidden(true)
     Hts_Ha:ClearAnchors()
     Hts_Down:ClearAnchors()
+    Hts_Ice:ClearAnchors()
     
     --heavy attacks
     if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
@@ -223,6 +274,13 @@ function HowToSunspire.InitUI()
 		Hts_Down:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.Portal, sV.OffsetY.Portal)
     else 
 		Hts_Down:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Portal, sV.OffsetY.Portal)
+    end
+
+    --ice tomb notifications
+    if sV.OffsetX.IceTomb ~= HowToSunspire.Default.OffsetX.IceTomb and sV.OffsetY.IceTomb ~= HowToSunspire.Default.OffsetY.IceTomb then 
+		Hts_Ice:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.IceTomb, sV.OffsetY.IceTomb)
+    else 
+		Hts_Ice:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.IceTomb, sV.OffsetY.IceTomb)
     end
     
 end
@@ -284,6 +342,11 @@ end
 function HowToSunspire.SaveLoc_Down()
 	sV.OffsetX.Portal = Hts_Down:GetLeft()
 	sV.OffsetY.Portal = Hts_Down:GetTop()
+end
+
+function HowToSunspire.SaveLoc_Ice()
+	sV.OffsetX.IceTomb = Hts_Ice:GetLeft()
+	sV.OffsetY.IceTomb = Hts_Ice:GetTop()
 end
 
 function HowToSunspire.OnAddOnLoaded(event, addonName)

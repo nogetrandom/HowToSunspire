@@ -19,6 +19,7 @@ function HowToSunspire.CreateSettingsWindow()
 	local Unlock = {
 		HA = false,
 		Portal = false,
+		IceTomb = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -51,6 +52,32 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{
 			type = "header",
+			name = "Lokkestiiz Notifications",
+		},
+		{	type = "description",
+			text = "To track how many time before Ice Tomb really spawn, and how many time remaining to take it.\nTODO: Add laser timer.",
+		},
+		{	type = "checkbox",
+			name = "Unlock Ice Tomb",
+			tooltip = "Use it to set the position of the IceTimer.",
+			default = false,
+			getFunc = function() return Unlock.IceTomb end,
+			setFunc = function(newValue)
+				Unlock.IceTomb = newValue
+				Hts_Ice:SetHidden(not newValue)
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Portal",
+			tooltip = "To enable or not the tracking of when Ice Tomb spawn and how many time is remaining to take it.",
+			default = true,
+			getFunc = function() return sV.Enable.IceTomb end,
+			setFunc = function(newValue)
+				sV.Enable.IceTomb = newValue
+			end,
+		},
+		{
+			type = "header",
 			name = "Downstair Notifications",
 		},
 		{	type = "description",
@@ -58,7 +85,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Unlock Portals Notif",
-			tooltip = "Use it to set the position of all the Portals Notifications.",
+			tooltip = "Use it to set the position of all the Downstairs Notifications.",
 			default = false,
 			getFunc = function() return Unlock.Portal end,
 			setFunc = function(newValue)
