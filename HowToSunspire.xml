@@ -34,7 +34,7 @@
 				HowToSunspire.SaveLoc_Ice()
 			</OnMoveStop>
             <Controls>
-                <Label name="$(parent)_Label" width="200" height="40" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" inheritAlpha="true" color="FFFFFF" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="|c00ffffIce 1 in: |r 2.6">
+                <Label name="$(parent)_Label" width="200" height="40" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" inheritAlpha="true" color="FFFFFF" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="|c00ffffIce |cff00001|r |c00ffffin: |r 2.6">
                     <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
                 </Label>
             </Controls>			

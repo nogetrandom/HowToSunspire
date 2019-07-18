@@ -12,7 +12,7 @@ HowToSunspire.AbilitiesToTrack = {
     [119632] = HowToSunspire.IceTomb, --ice tomb on first boss
     
     [121676] = HowToSunspire.Portal, --Portal on last boss
-    [121216] = HowToSunspire.IsDownstair, --Portal used
+    [121213] = HowToSunspire.IsDownstair, --Portal used
     [121254] = HowToSunspire.IsUpstair, --return to reality
     [121436] = HowToSunspire.InterruptDown, --attack to interrupt down
 }

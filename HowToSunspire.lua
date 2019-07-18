@@ -84,26 +84,26 @@ end
 --------------------
 ---- LOKKESTIIZ ----
 --------------------
-local iceNumber = 1
+local iceNumber = 0
 local prevIce = 0
 local iceTimer
 function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.IceTomb == true then
         local currentTime = GetGameTimeMilliseconds();
-        local timeSincePrev = currentTime - prevIce
         iceTimer = currentTime / 1000 + 13
 
-        if timeSincePrev >= 70000 or (timeSincePrev >= 60000 and iceNumber ~= 2) then
-            iceNumber = 1
+        if prevIce + 60000 <= currentTime then
+            iceNumber = 0
         end
         prevIce = currentTime
+        iceNumber = iceNumber % 3 + 1
 
         HowToSunspire.IceTombTimerUI()
         Hts_Ice:SetHidden(false)
         PlaySound(SOUNDS.DUEL_START)
 
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
-        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "IceTombTimer", 100, HowToSunspire.PortalTimerUI)
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "IceTombTimer", 100, HowToSunspire.IceTombTimerUI)
     end
 end
 
@@ -112,16 +112,10 @@ function HowToSunspire.IceTombTimerUI()
     local timer = iceTimer - currentTime
 
     if timer > 9 then
-        Hts_Ice_Label:SetText("|c00ffffIce " .. iceNumber .. " in: |r" .. tostring(string.format("%.1f", timer - 9)))
+        Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffin: |r" .. tostring(string.format("%.1f", timer - 9)))
     elseif timer >= 0 then 
-        Hts_Ice_Label:SetText("|c00ffffIce " .. iceNumber .. " remain: |r" .. tostring(string.format("%.0f", timer)))
+        Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffremain: |r" .. tostring(string.format("%.0f", timer)))
     else
-        if iceNumber == 3 then
-            iceNumber = 1
-        else
-            iceNumber = iceNumber + 1
-        end
-
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
         Hts_Ice:SetHidden(true)
     end
@@ -152,6 +146,7 @@ function HowToSunspire.PortalTimerUI()
 
     if timer >= 0 then
         Hts_Down_Label:SetText("|c7fffd4Portal: |r" .. tostring(string.format("%.0f", timer)))
+        Hts_Down:SetHidden(false)
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
         Hts_Down:SetHidden(true)
@@ -160,33 +155,27 @@ end
 
 local downstair = false
 function HowToSunspire.IsDownstair(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
-    if targetType == COMBAT_UNIT_TYPE_PLAYER then
+    if result == ACTION_RESULT_EFFECT_GAINED_DURATION and targetType == COMBAT_UNIT_TYPE_PLAYER then
         downstair = true
-        d("DownStair")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
         Hts_Down:SetHidden(true)
-    else
-        --d("targetType: " .. targetType " / result: " .. result)
     end
 end
 
 function HowToSunspire.IsUpstair(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     --Unregister for all down relative events
-    if result == ACTION_RESULT_EFFECT_GAINED_DURATION then --_DURATION
+    if result == ACTION_RESULT_EFFECT_GAINED_DURATION and targetType == COMBAT_UNIT_TYPE_PLAYER then
         downstair = false
-        d("UpStair")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
         Hts_Down:SetHidden(true)
-    else
-        --d("targetType: " .. targetType " / result: " .. result)
     end
 end
 
 local interruptTime
 local interruptUnitId
 function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
-    if result ~= ACTION_RESULT_BEGIN or downstair ~= true then return end
+    if result ~= ACTION_RESULT_EFFECT_GAINED_DURATION --[[or downstair ~= true]] then return end
     
     if sV.Enable.Pins == true then
         --register for when it is bashed
@@ -211,7 +200,7 @@ end
 
 function HowToSunspire.InterruptTimerUI()
     local currentTime = GetGameTimeMilliseconds()
-    local timer = portalTime - currentTime
+    local timer = interruptTime - currentTime
 
     if timer >= 0 then
         Hts_Down_Label:SetText("|c7fffd4Interrupt: |r" .. tostring(string.format("%.1f", timer / 1000)))
@@ -241,7 +230,7 @@ end
 
 function HowToSunspire.PinsTimerUI()
     local currentTime = GetGameTimeMilliseconds() / 1000
-    local timer = portalTime - currentTime
+    local timer = pinsTime - currentTime
 
     if timer >= 0 then
         Hts_Down_Label:SetText("|c7fffd4Next Pins: |r" .. tostring(string.format("%.0f", timer)))
