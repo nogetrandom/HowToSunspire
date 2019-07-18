@@ -172,12 +172,15 @@ end
 
 function HowToSunspire.IsUpstair(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     --Unregister for all down relative events
-    downstair = false
-    d("UpStair")
-    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
-    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
-    Hts_Down:SetHidden(true)
-    --d("targetType: " .. targetType " / result: " .. result)
+    if result == ACTION_RESULT_EFFECT_GAINED then --_DURATION
+        downstair = false
+        d("UpStair")
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
+        Hts_Down:SetHidden(true)
+    else
+        --d("targetType: " .. targetType " / result: " .. result)
+    end
 end
 
 local interruptTime
