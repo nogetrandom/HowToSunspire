@@ -23,6 +23,8 @@ HowToSunspire.Default = {
     Enable = {
         HA = true,
         Portal = true,
+        Interrupt = true,
+        Pins = true,
     }
 }
 
@@ -92,10 +94,6 @@ function HowToSunspire.Portal(_, result, _, _, _, _, _, _, _, targetType, hitVal
 
 		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "PortalTimer", 1000, HowToSunspire.PortalTimerUI)
-
-        --Run function relative to downstair mechanic
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsDownstair", EVENT_SYNERGY_ABILITY_CHANGED)
-        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "IsDownstair", EVENT_SYNERGY_ABILITY_CHANGED, HowToSunspire.IsDownstair)
     end
 end
 
@@ -107,51 +105,45 @@ function HowToSunspire.PortalTimerUI()
         Hts_Down_Label:SetText("|c7fffd4Portal: |r" .. tostring(string.format("%.0f", timer)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsDownstair", EVENT_SYNERGY_ABILITY_CHANGED)
         Hts_Down:SetHidden(true)
     end
 end
 
-function HowToSunspire.IsDownstair()
-    local boss = 0
-    for i = 1, MAX_BOSSES do
-        if DoesUnitExist("boss" .. i) then --when you are down
-            boss = boss + 1
-        end
-    end
-
-    if boss == 0 then
+local downstair = false
+function HowToSunspire.IsDownstair(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if targetType == COMBAT_UNIT_TYPE_PLAYER then
+        downstair = true
         d("DownStair")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsDownstair", EVENT_SYNERGY_ABILITY_CHANGED)
-
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT)
-        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT, HowToSunspire.IsUpstair) --return to reality
-        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 121254) 
-
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT)
-        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT, HowToSunspire.InterruptDown) --interrupt thing
-        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 121436) 
+        Hts_Down:SetHidden(true)
     else
-        d("NmbBoss: " .. boss)
+        --d("targetType: " .. targetType " / result: " .. result)
     end
 end
 
-function HowToSunspire.IsUpstair()
+function HowToSunspire.IsUpstair(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     --Unregister for all down relative events
+    downstair = false
     d("UpStair")
-    EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IsUpstair", EVENT_COMBAT_EVENT)
-    EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Interrupt", EVENT_COMBAT_EVENT)
-
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
-    EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
+    Hts_Down:SetHidden(true)
+    --d("targetType: " .. targetType " / result: " .. result)
 end
 
 local interruptTime
 local interruptUnitId
 function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
-    if result == ACTION_RESULT_BEGIN then
+    if result ~= ACTION_RESULT_BEGIN or downstair ~= true then return end
+    
+    if sV.Enable.Pins == true then
+        --register for when it is bashed
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
+        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT, HowToSunspire.PinsDown) --interrupt down
+        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_INTERRUPT)
+    end
+
+    if sV.Enable.Interrupt == true then
         --add the HA timer to the table
         interruptTime = GetGameTimeMilliseconds() + hitValue
         interruptUnitId = targetUnitId
@@ -162,11 +154,6 @@ function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType,
 
 		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "InterruptTimer", 100, HowToSunspire.InterruptTimerUI)
-
-        --register for when it is bashed
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
-        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT, HowToSunspire.PinsDown) --interrupt down
-        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_INTERRUPT)
     end
 end
 
@@ -184,6 +171,9 @@ end
 
 local pinsTime
 function HowToSunspire.PinsDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
+    --stop the timer of interrupt
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
+
     if interruptUnitId == targetUnitId then
         interruptUnitId = nil
         pinsTime = GetGameTimeMilliseconds() / 1000 + 20

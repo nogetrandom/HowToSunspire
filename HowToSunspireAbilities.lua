@@ -10,4 +10,7 @@ HowToSunspire.AbilitiesToTrack = {
     [117071] = HowToSunspire.HeavyAttack, --HA from 1H & Shield
     
     [121676] = HowToSunspire.Portal, --Portal on last boss
+    [121216] = HowToSunspire.IsDownstair, --Portal used
+    [121254] = HowToSunspire.IsUpstair, --return to reality
+    [121436] = HowToSunspire.InterruptDown, --attack to interrupt down
 }

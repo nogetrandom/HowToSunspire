@@ -54,7 +54,7 @@ function HowToSunspire.CreateSettingsWindow()
 			name = "Downstair Notifications",
 		},
 		{	type = "description",
-			text = "To track when portal spawn, and then if you are downstair you will trak interrupt to do on the add and when the next pins are going to hit.\nFor now you can't enable or disable tracking of the specific notification, you got two choice : tracking portal + interrupt + pins, or tracking none of them.",
+			text = "To track when portal spawn, and then if you are downstair you will track interrupt to do on the add and when the next pins are going to hit.",
 		},
 		{	type = "checkbox",
 			name = "Unlock Portals Notif",
@@ -63,16 +63,34 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return Unlock.Portal end,
 			setFunc = function(newValue)
 				Unlock.Portal = newValue
-				Hts_Down:SetHidden(not newValue)  
+				Hts_Down:SetHidden(not newValue)
 			end,
 		},
 		{	type = "checkbox",
-			name = "Enable All Portals Notif",
-			tooltip = "To enable or not the tracking of downstair relative mechanics.",
+			name = "Enable Portal",
+			tooltip = "To enable or not the tracking of when portal spawn and how many time is remaining to take it.",
 			default = true,
 			getFunc = function() return sV.Enable.Portal end,
-			setFunc = function(newValue)  
+			setFunc = function(newValue)
 				sV.Enable.Portal = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Interrupt Down",
+			tooltip = "To enable or not the tracking of the attack to interrupt downstair.",
+			default = true,
+			getFunc = function() return sV.Enable.Interrupt end,
+			setFunc = function(newValue)
+				sV.Enable.Interrupt = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Pins Tracking",
+			tooltip = "To enable or not the tracking of the next pins downstair (stack just before end of timer).",
+			default = true,
+			getFunc = function() return sV.Enable.Pins end,
+			setFunc = function(newValue)
+				sV.Enable.Pins = newValue
 			end,
 		},
 	}
