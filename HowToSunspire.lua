@@ -252,10 +252,18 @@ function HowToSunspire.PortalTimerUI()
     end
 end
 
-local downstair = false
+--local downstair = false
+local cptDownstair = 0
 function HowToSunspire.IsDownstair(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
-    if result == ACTION_RESULT_EFFECT_GAINED_DURATION and targetType == COMBAT_UNIT_TYPE_PLAYER then
-        downstair = true
+    if targetType == COMBAT_UNIT_TYPE_GROUP then
+        cptDownstair = cptDownstair + 1
+    elseif targetType ~= COMBAT_UNIT_TYPE_PLAYER then
+        return
+    end
+    
+    if result == ACTION_RESULT_EFFECT_GAINED_DURATION or cptDownstair == 3 then
+        --downstair = true
+        cptDownstair = 0
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
         Hts_Down:SetHidden(true)
     end
@@ -264,7 +272,7 @@ end
 function HowToSunspire.IsUpstair(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     --Unregister for all down relative events
     if result == ACTION_RESULT_EFFECT_GAINED_DURATION and targetType == COMBAT_UNIT_TYPE_PLAYER then
-        downstair = false
+        --downstair = false
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
         Hts_Down:SetHidden(true)
