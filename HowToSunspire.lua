@@ -16,11 +16,13 @@ HowToSunspire.Default = {
         HA = 0,
         Portal = 0,
         IceTomb = 0,
+        SweepBreath = 0,
     },
     OffsetY = {
         HA = 0,
         Portal = 60,
         IceTomb = -60,
+        SweepBreath = -120,
     },
     Enable = {
         HA = true,
@@ -28,6 +30,7 @@ HowToSunspire.Default = {
         Interrupt = true,
         Pins = true,
         IceTomb = true,
+        SweepBreath = true,
     }
 }
 
@@ -116,9 +119,67 @@ function HowToSunspire.IceTombTimerUI()
     elseif timer >= 0 then 
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffremain: |r" .. tostring(string.format("%.0f", timer)))
     else
-        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
         Hts_Ice:SetHidden(true)
     end
+end
+
+---------------------
+---- NAHVIINTAAS ----
+---------------------
+local rightToLeft
+function HowToSunspire.SweepingBreath(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.SweepBreath == true then
+        if abilityId == 118743 then
+            rightToLeft = true
+        else
+            rightToLeft = false
+        end
+
+        --run all UI functions for HA
+        HowToSunspire.SweepingBreathUI()
+        Hts_Sweep:SetHidden(false)
+		PlaySound(SOUNDS.DUEL_START)
+
+		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "SweepingBreath", 100, HowToSunspire.SweepingBreathUI)
+        
+        zo_callLater(function ()
+            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
+            Hts_Down:SetHidden(true) 
+        end, 5000)
+    end
+end
+
+local flash = 0
+function HowToSunspire.SweepingBreathUI()
+    flash = flash % 4 + 1
+
+    --need to put base color in xml #FFD700
+    local arrow
+    if rightToLeft then
+        if flash == 1 then
+            arrow = "<<|cffa500<|r|cff0000<|r"
+        elseif flash == 2 then
+            arrow = "<|cffa500<|r|cff0000<|r|cffa500<|r"
+        elseif flash == 3 then
+            arrow = "|cffa500<|r|cff0000<|r|cffa500<|r<"
+        else
+            arrow = "|cff0000<|r|cffa500<|r<<"
+        end
+    else
+        if flash == 1 then
+            arrow = "|cff0000>|r|cffa500>|r>>"
+        elseif flash == 2 then
+            arrow = "|cffa500>|r|cff0000>|r|cffa500>|r>"
+        elseif flash == 3 then
+            arrow = ">|cffa500>|r|cff0000>|r|cffa500>|r"
+        else
+            arrow = ">>|cffa500>|r|cff0000>|r"
+        end
+    end
+
+    Hts_Sweep_Label:SetText(arrow .. " Sweep Breath " .. arrow)
 end
 
 ------------------------
@@ -146,7 +207,7 @@ function HowToSunspire.PortalTimerUI()
 
     if timer >= 0 then
         Hts_Down_Label:SetText("|c7fffd4Portal: |r" .. tostring(string.format("%.0f", timer)))
-        Hts_Down:SetHidden(false)
+        --Hts_Down:SetHidden(false)
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
         Hts_Down:SetHidden(true)
@@ -248,9 +309,11 @@ function HowToSunspire.InitUI()
     Hts_Ha:SetHidden(true)
     Hts_Down:SetHidden(true)
     Hts_Ice:SetHidden(true)
+    Hts_Sweep:SetHidden(true)
     Hts_Ha:ClearAnchors()
     Hts_Down:ClearAnchors()
     Hts_Ice:ClearAnchors()
+    Hts_Sweep:ClearAnchors()
     
     --heavy attacks
     if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
@@ -273,6 +336,13 @@ function HowToSunspire.InitUI()
 		Hts_Ice:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.IceTomb, sV.OffsetY.IceTomb)
     else 
 		Hts_Ice:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.IceTomb, sV.OffsetY.IceTomb)
+    end
+
+    --fire sweeping breath
+    if sV.OffsetX.SweepBreath ~= HowToSunspire.Default.OffsetX.SweepBreath and sV.OffsetY.SweepBreath ~= HowToSunspire.Default.OffsetY.SweepBreath then 
+		Hts_Sweep:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.SweepBreath, sV.OffsetY.SweepBreath)
+    else 
+		Hts_Sweep:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.SweepBreath, sV.OffsetY.SweepBreath)
     end
     
 end
@@ -339,6 +409,11 @@ end
 function HowToSunspire.SaveLoc_Ice()
 	sV.OffsetX.IceTomb = Hts_Ice:GetLeft()
 	sV.OffsetY.IceTomb = Hts_Ice:GetTop()
+end
+
+function HowToSunspire.SaveLoc_Sweep()
+	sV.OffsetX.SweepBreath = Hts_Sweep:GetLeft()
+	sV.OffsetY.SweepBreath = Hts_Sweep:GetTop()
 end
 
 function HowToSunspire.OnAddOnLoaded(event, addonName)

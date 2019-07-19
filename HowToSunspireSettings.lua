@@ -20,6 +20,7 @@ function HowToSunspire.CreateSettingsWindow()
 		HA = false,
 		Portal = false,
 		IceTomb = false,
+		SweepBreath = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -74,6 +75,32 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.IceTomb end,
 			setFunc = function(newValue)
 				sV.Enable.IceTomb = newValue
+			end,
+		},
+		{
+			type = "header",
+			name = "Nahviintaas Notifications",
+		},
+		{	type = "description",
+			text = "To track the fire sweeping breath and from which side it comes.\nTODO: Add thrash timer, interrupt for statues, etc??",
+		},
+		{	type = "checkbox",
+			name = "Unlock Sweeping Breath",
+			tooltip = "Use it to set the position of the Sweeping Breath.",
+			default = false,
+			getFunc = function() return Unlock.SweepBreath end,
+			setFunc = function(newValue)
+				Unlock.SweepBreath = newValue
+				Hts_Sweep:SetHidden(not newValue)
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Sweeping Breath",
+			tooltip = "To enable or not the tracking of Sweeping Breath, and from which side it comes from.",
+			default = true,
+			getFunc = function() return sV.Enable.SweepBreath end,
+			setFunc = function(newValue)
+				sV.Enable.SweepBreath = newValue
 			end,
 		},
 		{

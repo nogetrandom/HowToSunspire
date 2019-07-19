@@ -10,7 +10,10 @@ HowToSunspire.AbilitiesToTrack = {
     [117071] = HowToSunspire.HeavyAttack, --HA from 1H & Shield
 
     [119632] = HowToSunspire.IceTomb, --ice tomb on first boss
-    
+   
+    [120188] = HowToSunspire.SweepingBreath, --fire sweeping breath >>>>
+    [118743] = HowToSunspire.SweepingBreath, --fire sweeping breath <<<<
+
     [121676] = HowToSunspire.Portal, --Portal on last boss
     [121213] = HowToSunspire.IsDownstair, --Portal used
     [121254] = HowToSunspire.IsUpstair, --return to reality
