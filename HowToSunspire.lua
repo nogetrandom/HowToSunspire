@@ -17,12 +17,14 @@ HowToSunspire.Default = {
         Portal = 0,
         IceTomb = 0,
         SweepBreath = 0,
+        LaserLokke = 0,
     },
     OffsetY = {
         HA = 0,
         Portal = 60,
         IceTomb = -60,
         SweepBreath = -120,
+        LaserLokke = -120,
     },
     Enable = {
         HA = true,
@@ -31,6 +33,7 @@ HowToSunspire.Default = {
         Pins = true,
         IceTomb = true,
         SweepBreath = true,
+        LaserLokke = true,
     }
 }
 
@@ -89,11 +92,11 @@ end
 --------------------
 local iceNumber = 0
 local prevIce = 0
-local iceTimer
+local iceTime
 function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.IceTomb == true then
         local currentTime = GetGameTimeMilliseconds();
-        iceTimer = currentTime / 1000 + 13
+        iceTime = currentTime / 1000 + 13
 
         if prevIce + 60000 <= currentTime then
             iceNumber = 0
@@ -112,7 +115,7 @@ end
 
 function HowToSunspire.IceTombTimerUI()
     local currentTime = GetGameTimeMilliseconds() / 1000
-    local timer = iceTimer - currentTime
+    local timer = iceTime - currentTime
 
     if timer > 9 then
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffin: |r" .. tostring(string.format("%.1f", timer - 9)))
@@ -121,6 +124,41 @@ function HowToSunspire.IceTombTimerUI()
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
         Hts_Ice:SetHidden(true)
+    end
+end
+
+local laserTime
+function HowToSunspire.LokkeLaser(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.LaserLokke == true then
+        local currentTime = GetGameTimeMilliseconds();
+        if abilityId == 122820 then
+            laserTime = currentTime / 1000 + 40
+        elseif abilityId == 122821 then
+            laserTime = currentTime / 1000 + 10
+        elseif abilityId == 122822 then
+            laserTime = currentTime / 1000 + 32
+        else
+            return
+        end
+
+        HowToSunspire.LokkeLaserTimerUI()
+        Hts_Laser:SetHidden(false)
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserbTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer", 1000, HowToSunspire.LokkeLaserTimerUI)
+    end
+end
+
+function HowToSunspire.LokkeLaserTimerUI()
+    local currentTime = GetGameTimeMilliseconds() / 1000
+    local timer = laserTime - currentTime
+
+    if timer >= 0 then
+        Hts_Laser_Label:SetText("|c7fffd4Laser: |r" .. tostring(string.format("%.0f", timer)))
+    else
+        Hts_Laser_Label:SetText("|c7fffd4Laser: |rNOW")
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
+        zo_callLater(function () Hts_Laser:SetHidden(true) end, 5000)
     end
 end
 
@@ -310,10 +348,12 @@ function HowToSunspire.InitUI()
     Hts_Down:SetHidden(true)
     Hts_Ice:SetHidden(true)
     Hts_Sweep:SetHidden(true)
+    Hts_Laser:SetHidden(true)
     Hts_Ha:ClearAnchors()
     Hts_Down:ClearAnchors()
     Hts_Ice:ClearAnchors()
     Hts_Sweep:ClearAnchors()
+    Hts_Laser:ClearAnchors()
     
     --heavy attacks
     if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
@@ -345,6 +385,12 @@ function HowToSunspire.InitUI()
 		Hts_Sweep:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.SweepBreath, sV.OffsetY.SweepBreath)
     end
     
+    --laser beam on lokke
+    if sV.OffsetX.LaserLokke ~= HowToSunspire.Default.OffsetX.LaserLokke and sV.OffsetY.LaserLokke ~= HowToSunspire.Default.OffsetY.LaserLokke then 
+		Hts_Laser:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.LaserLokke, sV.OffsetY.LaserLokke)
+    else 
+		Hts_Laser:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.LaserLokke, sV.OffsetY.LaserLokke)
+    end
 end
 
 function HowToSunspire.OnPlayerActivated()
@@ -414,6 +460,11 @@ end
 function HowToSunspire.SaveLoc_Sweep()
 	sV.OffsetX.SweepBreath = Hts_Sweep:GetLeft()
 	sV.OffsetY.SweepBreath = Hts_Sweep:GetTop()
+end
+
+function HowToSunspire.SaveLoc_Laser()
+	sV.OffsetX.LaserLokke = Hts_Laser:GetLeft()
+	sV.OffsetY.LaserLokke = Hts_Laser:GetTop()
 end
 
 function HowToSunspire.OnAddOnLoaded(event, addonName)

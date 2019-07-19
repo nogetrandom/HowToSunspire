@@ -21,6 +21,7 @@ function HowToSunspire.CreateSettingsWindow()
 		Portal = false,
 		IceTomb = false,
 		SweepBreath = false,
+		LaserLokke = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -75,6 +76,25 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.IceTomb end,
 			setFunc = function(newValue)
 				sV.Enable.IceTomb = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Unlock Laser",
+			tooltip = "Use it to set the position of the laser that you have to block.",
+			default = false,
+			getFunc = function() return Unlock.LaserLokke end,
+			setFunc = function(newValue)
+				Unlock.LaserLokke = newValue
+				Hts_Laser:SetHidden(not newValue)
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Laser",
+			tooltip = "To enable or not the tracking of when Lokkestiiz will cast the next laser.",
+			default = true,
+			getFunc = function() return sV.Enable.LaserLokke end,
+			setFunc = function(newValue)
+				sV.Enable.LaserLokke = newValue
 			end,
 		},
 		{

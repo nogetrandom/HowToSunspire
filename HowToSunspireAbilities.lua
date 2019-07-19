@@ -10,6 +10,9 @@ HowToSunspire.AbilitiesToTrack = {
     [117071] = HowToSunspire.HeavyAttack, --HA from 1H & Shield
 
     [119632] = HowToSunspire.IceTomb, --ice tomb on first boss
+    [122820] = HowToSunspire.LokkeLaser, --first jump of lokke
+    [122821] = HowToSunspire.LokkeLaser, --second jump of lokke
+    [122822] = HowToSunspire.LokkeLaser, --third jump of lokke
    
     [120188] = HowToSunspire.SweepingBreath, --fire sweeping breath >>>>
     [118743] = HowToSunspire.SweepingBreath, --fire sweeping breath <<<<
