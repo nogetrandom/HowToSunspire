@@ -184,7 +184,7 @@ function HowToSunspire.SweepingBreath(_, result, _, _, _, _, _, _, _, targetType
         
         zo_callLater(function ()
             EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
-            Hts_Down:SetHidden(true) 
+            Hts_Sweep:SetHidden(true) 
         end, 5000)
     end
 end
