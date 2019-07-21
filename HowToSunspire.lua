@@ -115,7 +115,7 @@ end
 
 function HowToSunspire.IceTombTimerUI()
     local currentTime = GetGameTimeMilliseconds() / 1000
-    local timer = iceTime - currentTime
+    local timer = iceTime - currentTime 
 
     if timer > 9 then
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffin: |r" .. tostring(string.format("%.1f", timer - 9)))
@@ -182,10 +182,8 @@ function HowToSunspire.SweepingBreath(_, result, _, _, _, _, _, _, _, targetType
 		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "SweepingBreath", 100, HowToSunspire.SweepingBreathUI)
         
-        zo_callLater(function ()
-            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
-            Hts_Sweep:SetHidden(true) 
-        end, 5000)
+        --hide 5sec later
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideSweepingBreath", 5000, HowToSunspire.HideSweepingBreath)
     end
 end
 
@@ -218,6 +216,12 @@ function HowToSunspire.SweepingBreathUI()
     end
 
     Hts_Sweep_Label:SetText(arrow .. " Sweep Breath " .. arrow)
+end
+
+function HowToSunspire.HideSweepingBreath()
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideSweepingBreath")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
+    Hts_Sweep:SetHidden(true)
 end
 
 ------------------------
