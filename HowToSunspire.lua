@@ -18,6 +18,7 @@ HowToSunspire.Default = {
         IceTomb = 0,
         SweepBreath = 0,
         LaserLokke = 0,
+        Block = 0,
     },
     OffsetY = {
         HA = 0,
@@ -25,6 +26,7 @@ HowToSunspire.Default = {
         IceTomb = -60,
         SweepBreath = -120,
         LaserLokke = -120,
+        Block = 60,
     },
     Enable = {
         HA = true,
@@ -34,12 +36,13 @@ HowToSunspire.Default = {
         IceTomb = true,
         SweepBreath = true,
         LaserLokke = true,
+        Block = true,
     }
 }
 
------------------------
----- HEAVY ATTACKS ----
------------------------
+----------------------
+---- ENTIRE TRIAL ----
+----------------------
 local listHA = {}
 function HowToSunspire.HeavyAttack(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if targetType ~= COMBAT_UNIT_TYPE_PLAYER or hitValue < 100 or sV.Enable.HA ~= true then return end
@@ -87,6 +90,20 @@ function HowToSunspire.HeavyAttackUI()
     end
 end
 
+function HowToSunspire.Block(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.Block == true then
+        Hts_Block:SetHidden(false)
+		PlaySound(SOUNDS.DUEL_START)
+
+		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideBlock", 3000, HowToSunspire.HideBlock)
+    end
+end
+
+function HowToSunspire.HideBlock()
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
+    Hts_Block:SetHidden(true)
+end
 --------------------
 ---- LOKKESTIIZ ----
 --------------------
@@ -389,11 +406,13 @@ function HowToSunspire.InitUI()
     Hts_Ice:SetHidden(true)
     Hts_Sweep:SetHidden(true)
     Hts_Laser:SetHidden(true)
+    Hts_Block:SetHidden(true)
     Hts_Ha:ClearAnchors()
     Hts_Down:ClearAnchors()
     Hts_Ice:ClearAnchors()
     Hts_Sweep:ClearAnchors()
     Hts_Laser:ClearAnchors()
+    Hts_Block:ClearAnchors()
     
     --heavy attacks
     if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
@@ -431,6 +450,13 @@ function HowToSunspire.InitUI()
     else 
 		Hts_Laser:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.LaserLokke, sV.OffsetY.LaserLokke)
     end
+
+    --block from red cats
+    if sV.OffsetX.Block ~= HowToSunspire.Default.OffsetX.Block and sV.OffsetY.Block ~= HowToSunspire.Default.OffsetY.Block then 
+		Hts_Block:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.Block, sV.OffsetY.Block)
+    else 
+		Hts_Block:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Block, sV.OffsetY.Block)
+    end
 end
 
 function HowToSunspire.ResetAll()
@@ -440,6 +466,7 @@ function HowToSunspire.ResetAll()
     Hts_Ice:SetHidden(true)
     Hts_Sweep:SetHidden(true)
     Hts_Laser:SetHidden(true)
+    Hts_Block:SetHidden(true)
 
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
@@ -532,6 +559,11 @@ end
 function HowToSunspire.SaveLoc_Laser()
 	sV.OffsetX.LaserLokke = Hts_Laser:GetLeft()
 	sV.OffsetY.LaserLokke = Hts_Laser:GetTop()
+end
+
+function HowToSunspire.SaveLoc_Block()
+	sV.OffsetX.Block = Hts_Block:GetLeft()
+	sV.OffsetY.Block = Hts_Block:GetTop()
 end
 
 function HowToSunspire.OnAddOnLoaded(event, addonName)

@@ -22,6 +22,7 @@ function HowToSunspire.CreateSettingsWindow()
 		IceTomb = false,
 		SweepBreath = false,
 		LaserLokke = false,
+		Block = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -50,6 +51,25 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.HA end,
 			setFunc = function(newValue)  
 				sV.Enable.HA = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Unlock Red Cats's Jump",
+			tooltip = "Use it to set the position of the block text.",
+			default = false,
+			getFunc = function() return Unlock.Block end,
+			setFunc = function(newValue)
+				Unlock.Block = newValue
+				Hts_Block:SetHidden(not newValue)  
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Red Cats's Jump",
+			tooltip = "To enable or not the tracking of the jump from red cats that you need to block.",
+			default = true,
+			getFunc = function() return sV.Enable.Block end,
+			setFunc = function(newValue)  
+				sV.Enable.Block = newValue
 			end,
 		},
 		{

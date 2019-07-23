@@ -9,6 +9,8 @@ HowToSunspire.AbilitiesToTrack = {
     [121422] = HowToSunspire.HeavyAttack, --HA from cone downstair
     [117071] = HowToSunspire.HeavyAttack, --HA from 1H & Shield
 
+    [122309] = HowToSunspire.Block, --jump from the red cats
+
     [119632] = HowToSunspire.IceTomb, --ice tomb on first boss
     [122820] = HowToSunspire.LokkeLaser, --first jump of lokke
     [122821] = HowToSunspire.LokkeLaser, --second jump of lokke
