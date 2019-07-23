@@ -110,6 +110,18 @@ function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitVa
 
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "IceTombTimer", 100, HowToSunspire.IceTombTimerUI)
+        
+        --update all 1 seconds instead of all 0.1 seconds
+        zo_callLater(function ()
+            HowToSunspire.IceTombTimerUI()
+            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
+            EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "IceTombTimer", 1000, HowToSunspire.IceTombTimerUI)
+        end, 4000)
+
+        --events for both ice took
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
+        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT, HowToSunspire.IceTombFinished)
+        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 119638)
     end
 end
 
@@ -123,6 +135,20 @@ function HowToSunspire.IceTombTimerUI()
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffremain: |r" .. tostring(string.format("%.0f", timer)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
+        Hts_Ice:SetHidden(true)
+    end
+end
+
+local iceState = false
+function HowToSunspire.IceTombFinished(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == EFFECT_RESULT_GAINED then
+        iceState = true
+    elseif result == EFFECT_RESULT_FADED and iceState == true then
+        iceState = false
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
         Hts_Ice:SetHidden(true)
     end
 end
@@ -144,7 +170,7 @@ function HowToSunspire.LokkeLaser(_, result, _, _, _, _, _, _, _, targetType, hi
         HowToSunspire.LokkeLaserTimerUI()
         Hts_Laser:SetHidden(false)
 
-        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserbTimer")
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer", 1000, HowToSunspire.LokkeLaserTimerUI)
     end
 end
@@ -158,7 +184,7 @@ function HowToSunspire.LokkeLaserTimerUI()
     else
         Hts_Laser_Label:SetText("|c7fffd4Laser: |rNOW")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
-        zo_callLater(function () Hts_Laser:SetHidden(true) end, 5000)
+        zo_callLater(function () Hts_Laser:SetHidden(true) end, 8000)
     end
 end
 
@@ -188,32 +214,33 @@ function HowToSunspire.SweepingBreath(_, result, _, _, _, _, _, _, _, targetType
 end
 
 local flash = 0
-function HowToSunspire.SweepingBreathUI()
+local function GetArrowForSweepingBreath()
     flash = flash % 4 + 1
 
-    --need to put base color in xml #FFD700
-    local arrow
     if rightToLeft then
         if flash == 1 then
-            arrow = "<<|cffa500<|r|cff0000<|r"
+            return "<<|cffa500<|r|cff0000<|r"
         elseif flash == 2 then
-            arrow = "<|cffa500<|r|cff0000<|r|cffa500<|r"
+            return "<|cffa500<|r|cff0000<|r|cffa500<|r"
         elseif flash == 3 then
-            arrow = "|cffa500<|r|cff0000<|r|cffa500<|r<"
+            return "|cffa500<|r|cff0000<|r|cffa500<|r<"
         else
-            arrow = "|cff0000<|r|cffa500<|r<<"
+            return "|cff0000<|r|cffa500<|r<<"
         end
     else
         if flash == 1 then
-            arrow = "|cff0000>|r|cffa500>|r>>"
+            return "|cff0000>|r|cffa500>|r>>"
         elseif flash == 2 then
-            arrow = "|cffa500>|r|cff0000>|r|cffa500>|r>"
+            return "|cffa500>|r|cff0000>|r|cffa500>|r>"
         elseif flash == 3 then
-            arrow = ">|cffa500>|r|cff0000>|r|cffa500>|r"
+            return ">|cffa500>|r|cff0000>|r|cffa500>|r"
         else
-            arrow = ">>|cffa500>|r|cff0000>|r"
+            return ">>|cffa500>|r|cff0000>|r"
         end
     end
+end
+function HowToSunspire.SweepingBreathUI()
+    local arrow = GetArrowForSweepingBreath()
 
     Hts_Sweep_Label:SetText(arrow .. " Sweep Breath " .. arrow)
 end
@@ -247,9 +274,10 @@ function HowToSunspire.PortalTimerUI()
     local currentTime = GetGameTimeMilliseconds() / 1000
     local timer = portalTime - currentTime
 
-    if timer >= 0 then
+    if timer >= 11 then 
+        Hts_Down_Label:SetText("|c7fffd4Portal: |r|cff0000" .. tostring(string.format("%.0f", timer)) .. "|r")
+    elseif timer >= 0 then
         Hts_Down_Label:SetText("|c7fffd4Portal: |r" .. tostring(string.format("%.0f", timer)))
-        --Hts_Down:SetHidden(false)
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
         Hts_Down:SetHidden(true)
@@ -405,6 +433,50 @@ function HowToSunspire.InitUI()
     end
 end
 
+function HowToSunspire.ResetAll()
+    --hide everything
+    Hts_Ha:SetHidden(true)
+    Hts_Down:SetHidden(true)
+    Hts_Ice:SetHidden(true)
+    Hts_Sweep:SetHidden(true)
+    Hts_Laser:SetHidden(true)
+
+    --unregister UI timer events
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
+    EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideSweepingBreath")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
+    EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
+
+    --reset variables
+    listHA = {}
+    iceNumber = 0
+    prevIce = 0
+    iceTime = nil
+    iceState = false
+    laserTime = nil
+    rightToLeft = nil
+    flash = 0
+    portalTime = nil
+    cptDownstair = 0
+    interruptTime = nil
+    interruptUnitId = nil
+    pinsTime = nil
+end
+
+function HowToSunspire.CombatEnded()
+    zo_callLater(function() 
+        if (not IsUnitInCombat("player")) then 
+            HowToSunspire.ResetAll()
+        end 
+    end, 3000);
+end
+
 function HowToSunspire.OnPlayerActivated()
     
     if GetZoneId(GetUnitZoneIndex("player")) == 1121 then --in Sunspire
@@ -412,27 +484,14 @@ function HowToSunspire.OnPlayerActivated()
             EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT, v)
             EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, k)
         end
+        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE, HowToSunspire.CombatEnded)
     else
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Unregister for all abilities
             EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT)
         end
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE)
     end
 
-end
-
-local cptSaved = 0
-function HowToSunspire.Test()
-    local cpt = 0
-    for i = 1, MAX_BOSSES do
-        if DoesUnitExist("boss" .. i) then
-            cpt = cpt + 1
-        end
-    end
-    if cpt ~= cptSaved then
-        cptSaved = cpt
-        d("|cFF0000Boss Changed|r")
-        PlaySound(SOUNDS.TELVAR_GAINED)
-    end
 end
 
 function HowToSunspire:Initialize()
@@ -447,10 +506,6 @@ function HowToSunspire:Initialize()
     --Events
     EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Activated", EVENT_PLAYER_ACTIVATED, HowToSunspire.OnPlayerActivated)
     
-    --Test
-    --EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Test", EVENT_BOSSES_CHANGED, HowToSunspire.Test)
-	--EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Test", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_DIED)
-
 	EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name, EVENT_ADD_ON_LOADED)
 end
 
