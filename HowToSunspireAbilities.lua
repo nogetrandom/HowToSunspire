@@ -11,9 +11,11 @@ HowToSunspire.AbilitiesToTrack = {
 
     [120890] = HowToSunspire.Block, --jump from the red cats
 
-    [121074] = HowToSunspire.Comet, --comet from downstair (not on someone)
+    [121075] = HowToSunspire.Comet, --comet from downstair (not on someone) 121074
     [120359] = HowToSunspire.Comet, --comet from lokkestiiz that bump 
-    [116619] = HowToSunspire.Comet, --comet from mage trash
+    [116636] = HowToSunspire.Comet, --comet from mage trash 116619
+    [117251] = HowToSunspire.Comet, --molten meteor veteran
+    [123067] = HowToSunspire.Comet, --molten meteor veteran
 
     [119632] = HowToSunspire.IceTomb, --ice tomb on first boss
     [122820] = HowToSunspire.LokkeLaser, --first jump of lokke
