@@ -16,7 +16,7 @@
 
         <TopLevelControl name="Hts_Down" resizeToFitDescendents="true" mouseEnabled="true" movable="true" clampedToScreen="true">
             <Dimensions x="300" y="60" />
-            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="60" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="50" />
             <OnMoveStop>
 				HowToSunspire.SaveLoc_Down()
 			</OnMoveStop>
@@ -29,7 +29,7 @@
 
         <TopLevelControl name="Hts_Ice" resizeToFitDescendents="true" mouseEnabled="true" movable="true" clampedToScreen="true">
             <Dimensions x="300" y="60" />
-            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="-60" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="-50" />
             <OnMoveStop>
 				HowToSunspire.SaveLoc_Ice()
 			</OnMoveStop>
@@ -42,7 +42,7 @@
 
         <TopLevelControl name="Hts_Sweep" resizeToFitDescendents="true" mouseEnabled="true" movable="true" clampedToScreen="true">
             <Dimensions x="300" y="60" />
-            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="-120" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="-100" />
             <OnMoveStop>
 				HowToSunspire.SaveLoc_Sweep()
 			</OnMoveStop>
@@ -55,7 +55,7 @@
 
         <TopLevelControl name="Hts_Laser" resizeToFitDescendents="true" mouseEnabled="true" movable="true" clampedToScreen="true">
             <Dimensions x="300" y="60" />
-            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="-120" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="50" />
             <OnMoveStop>
 				HowToSunspire.SaveLoc_Laser()
 			</OnMoveStop>
@@ -68,12 +68,25 @@
 
         <TopLevelControl name="Hts_Block" resizeToFitDescendents="true" mouseEnabled="true" movable="true" clampedToScreen="true">
             <Dimensions x="300" y="60" />
-            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="60" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="50" />
             <OnMoveStop>
 				HowToSunspire.SaveLoc_Block()
 			</OnMoveStop>
             <Controls>
                 <Label name="$(parent)_Label" width="200" height="40" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" inheritAlpha="true" color="FF4500" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="BLOCK">
+                    <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
+                </Label>
+            </Controls>			
+        </TopLevelControl>
+
+        <TopLevelControl name="Hts_Spit" resizeToFitDescendents="true" mouseEnabled="true" movable="true" clampedToScreen="true">
+            <Dimensions x="300" y="60" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="-50" />
+            <OnMoveStop>
+				HowToSunspire.SaveLoc_Spit()
+			</OnMoveStop>
+            <Controls>
+                <Label name="$(parent)_Label" width="200" height="40" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" inheritAlpha="true" color="FFFFFF" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="|cff1493Spit:|r 0.7">
                     <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
                 </Label>
             </Controls>			

@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.0"
+HowToSunspire.version = "1.0.1"
 
 local sV
 ---------------------------
@@ -19,14 +19,16 @@ HowToSunspire.Default = {
         SweepBreath = 0,
         LaserLokke = 0,
         Block = 0,
+        Spit = 0,
     },
     OffsetY = {
         HA = 0,
-        Portal = 60,
-        IceTomb = -60,
-        SweepBreath = -120,
-        LaserLokke = -120,
-        Block = 60,
+        Portal = 50,
+        IceTomb = -50,
+        SweepBreath = -100,
+        LaserLokke = 50,
+        Block = 50,
+        Spit = -50,
     },
     Enable = {
         HA = true,
@@ -37,6 +39,7 @@ HowToSunspire.Default = {
         SweepBreath = true,
         LaserLokke = true,
         Block = true,
+        Spit = true,
     }
 }
 
@@ -115,7 +118,7 @@ function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitVa
         local currentTime = GetGameTimeMilliseconds();
         iceTime = currentTime / 1000 + 13
 
-        if prevIce + 60000 <= currentTime then
+        if (prevIce + 70000 <= currentTime) or (prevIce + 60000 <= currentTime and iceNumber > 1) then
             iceNumber = 0
         end
         prevIce = currentTime
@@ -268,6 +271,34 @@ function HowToSunspire.HideSweepingBreath()
     Hts_Sweep:SetHidden(true)
 end
 
+local spitTime
+function HowToSunspire.FireSpit(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if targetType ~= COMBAT_UNIT_TYPE_PLAYER or hitValue < 100 or sV.Enable.Spit ~= true then return end
+
+	if result == ACTION_RESULT_BEGIN then
+		spitTime = GetGameTimeMilliseconds() + hitValue
+
+        HowToSunspire.FireSpitUI()
+        Hts_Spit:SetHidden(false)
+		PlaySound(SOUNDS.CHAMPION_POINTS_COMMITTED)
+
+		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireSpitTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireSpitTimer", 100, HowToSunspire.FireSpitUI)
+	end
+end
+
+function HowToSunspire.FireSpitUI()
+    local currentTime = GetGameTimeMilliseconds()
+    local timer = spitTime - currentTime
+
+    if timer >= 0 then
+        Hts_Spit_Label:SetText("|c7fffd4Spit: |r" .. tostring(string.format("%.1f", timer / 1000)))
+    else
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireSpitTimer")
+        Hts_Spit:SetHidden(true)
+    end
+end
+
 ------------------------
 ---- LAST DOWNSTAIR ----
 ------------------------
@@ -407,12 +438,14 @@ function HowToSunspire.InitUI()
     Hts_Sweep:SetHidden(true)
     Hts_Laser:SetHidden(true)
     Hts_Block:SetHidden(true)
+    Hts_Spit:SetHidden(true)
     Hts_Ha:ClearAnchors()
     Hts_Down:ClearAnchors()
     Hts_Ice:ClearAnchors()
     Hts_Sweep:ClearAnchors()
     Hts_Laser:ClearAnchors()
     Hts_Block:ClearAnchors()
+    Hts_Spit:ClearAnchors()
     
     --heavy attacks
     if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
@@ -457,6 +490,13 @@ function HowToSunspire.InitUI()
     else 
 		Hts_Block:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Block, sV.OffsetY.Block)
     end
+
+    --fire spit from nahvin
+    if sV.OffsetX.Spit ~= HowToSunspire.Default.OffsetX.Spit and sV.OffsetY.Spit ~= HowToSunspire.Default.OffsetY.Spit then 
+		Hts_Spit:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.Spit, sV.OffsetY.Spit)
+    else 
+		Hts_Spit:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Spit, sV.OffsetY.Spit)
+    end
 end
 
 function HowToSunspire.ResetAll()
@@ -467,6 +507,7 @@ function HowToSunspire.ResetAll()
     Hts_Sweep:SetHidden(true)
     Hts_Laser:SetHidden(true)
     Hts_Block:SetHidden(true)
+    Hts_Spit:SetHidden(true)    
 
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
@@ -475,6 +516,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideSweepingBreath")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireSpitTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
@@ -489,6 +531,7 @@ function HowToSunspire.ResetAll()
     laserTime = nil
     rightToLeft = nil
     flash = 0
+    spitTime = nil
     portalTime = nil
     cptDownstair = 0
     interruptTime = nil
@@ -523,7 +566,7 @@ end
 
 function HowToSunspire:Initialize()
 	--Saved Variables
-    HowToSunspire.savedVariables = ZO_SavedVars:NewAccountWide("HowToSunspireVariables", 1, nil, HowToSunspire.Default)
+    HowToSunspire.savedVariables = ZO_SavedVars:NewAccountWide("HowToSunspireVariables", 2, nil, HowToSunspire.Default)
     sV = HowToSunspire.savedVariables
 	--Settings
 	HowToSunspire.CreateSettingsWindow()
@@ -564,6 +607,11 @@ end
 function HowToSunspire.SaveLoc_Block()
 	sV.OffsetX.Block = Hts_Block:GetLeft()
 	sV.OffsetY.Block = Hts_Block:GetTop()
+end
+
+function HowToSunspire.SaveLoc_Spit()
+	sV.OffsetX.Spit = Hts_Spit:GetLeft()
+	sV.OffsetY.Spit = Hts_Spit:GetTop()
 end
 
 function HowToSunspire.OnAddOnLoaded(event, addonName)
