@@ -25,6 +25,7 @@ function HowToSunspire.CreateSettingsWindow()
 		LaserLokke = false,
 		Block = false,
 		Spit = false,
+		Comet = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -53,6 +54,7 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_Sweep:SetHidden(not newValue)
 						Hts_Down:SetHidden(not newValue)
 						Hts_Spit:SetHidden(not newValue)
+						Hts_Comet:SetHidden(not newValue) 
 					end,
 				},
 				{	type = "checkbox",
@@ -73,6 +75,16 @@ function HowToSunspire.CreateSettingsWindow()
 					setFunc = function(newValue)
 						Unlock.Block = newValue
 						Hts_Block:SetHidden(not newValue)  
+					end,
+				},
+				{	type = "checkbox",
+					name = "Unlock Comet",
+					tooltip = "Use it to set the position of the comet notification.",
+					default = false,
+					getFunc = function() return Unlock.Comet end,
+					setFunc = function(newValue)
+						Unlock.Comet = newValue
+						Hts_Comet:SetHidden(not newValue)  
 					end,
 				},
 				{	type = "checkbox",
@@ -129,14 +141,14 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{
 			type = "header",
-			name = "Heavy Attacks",
+			name = "Globals Notifications",
 		},
 		{	type = "description",
-			text = "To track all major heavy attacks in sunspire.\nIt include HA from all dragons, 1H & Shield, hulks on last boss, and cone of the add downstair on last boss.",
+			text = "Here you can track mechanics that can happen kinda everywhere in the trial.",
 		},
 		{	type = "checkbox",
 			name = "Enable HA Tracking",
-			tooltip = "To enable or not the tracking of Heavy Attacks.",
+			tooltip = "To track all major heavy attacks in sunspire.\nIt include HA from all dragons, 1H & Shield, hulks on last boss, and cone of the add downstair on last boss.",
 			default = true,
 			getFunc = function() return sV.Enable.HA end,
 			setFunc = function(newValue)  
@@ -150,6 +162,15 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.Block end,
 			setFunc = function(newValue)  
 				sV.Enable.Block = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Comet",
+			tooltip = "To enable the tracking of comet from mage trash, lokkestiiz, and add downstair.\nFor mage and lokke it will only track if it's on you, for the add downstair it will track for everyone.",
+			default = true,
+			getFunc = function() return sV.Enable.Comet end,
+			setFunc = function(newValue)  
+				sV.Enable.Comet = newValue
 			end,
 		},
 		{

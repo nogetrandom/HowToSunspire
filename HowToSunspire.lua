@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.0.1"
+HowToSunspire.version = "1.0.2"
 
 local sV
 ---------------------------
@@ -20,6 +20,7 @@ HowToSunspire.Default = {
         LaserLokke = 0,
         Block = 0,
         Spit = 0,
+        Comet = 0,
     },
     OffsetY = {
         HA = 0,
@@ -29,6 +30,7 @@ HowToSunspire.Default = {
         LaserLokke = 50,
         Block = 50,
         Spit = -50,
+        Comet = -150,
     },
     Enable = {
         HA = true,
@@ -40,6 +42,7 @@ HowToSunspire.Default = {
         LaserLokke = true,
         Block = true,
         Spit = true,
+        Comet = true,
     }
 }
 
@@ -107,6 +110,36 @@ function HowToSunspire.HideBlock()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
     Hts_Block:SetHidden(true)
 end
+
+local cometTime
+function HowToSunspire.Comet(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if (sV.Enable.Comet ~= true) or (hitValue < 100) or
+    (abilityId == 121074 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION) or
+    (abilityId == 120359 and result ~= ACTION_RESULT_BEGIN and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or
+    (abilityId == 116619 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION and targetType ~= COMBAT_UNIT_TYPE_PLAYER) then return end
+
+    cometTime = GetGameTimeMilliseconds() + hitValue
+
+    HowToSunspire.CometUI()
+    Hts_Comet:SetHidden(false)
+    PlaySound(SOUNDS.DUEL_START)
+
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
+    EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "CometTimer", 100, HowToSunspire.CometUI)
+end
+
+function HowToSunspire.CometUI()
+    local currentTime = GetGameTimeMilliseconds()
+    local timer = cometTime - currentTime
+
+    if timer >= 0 then
+        Hts_Comet_Label:SetText("|ce2fcfbComet: |r" .. tostring(string.format("%.1f", timer / 1000)))
+    else
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
+        Hts_Comet:SetHidden(true)
+    end
+end
+
 --------------------
 ---- LOKKESTIIZ ----
 --------------------
@@ -439,6 +472,7 @@ function HowToSunspire.InitUI()
     Hts_Laser:SetHidden(true)
     Hts_Block:SetHidden(true)
     Hts_Spit:SetHidden(true)
+    Hts_Comet:SetHidden(true)
     Hts_Ha:ClearAnchors()
     Hts_Down:ClearAnchors()
     Hts_Ice:ClearAnchors()
@@ -446,6 +480,7 @@ function HowToSunspire.InitUI()
     Hts_Laser:ClearAnchors()
     Hts_Block:ClearAnchors()
     Hts_Spit:ClearAnchors()
+    Hts_Comet:ClearAnchors()
     
     --heavy attacks
     if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
@@ -497,6 +532,13 @@ function HowToSunspire.InitUI()
     else 
 		Hts_Spit:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Spit, sV.OffsetY.Spit)
     end
+
+    --comet from various source
+    if sV.OffsetX.Comet ~= HowToSunspire.Default.OffsetX.Comet and sV.OffsetY.Comet ~= HowToSunspire.Default.OffsetY.Comet then 
+		Hts_Comet:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.Comet, sV.OffsetY.Comet)
+    else 
+		Hts_Comet:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Comet, sV.OffsetY.Comet)
+    end
 end
 
 function HowToSunspire.ResetAll()
@@ -508,9 +550,12 @@ function HowToSunspire.ResetAll()
     Hts_Laser:SetHidden(true)
     Hts_Block:SetHidden(true)
     Hts_Spit:SetHidden(true)    
+    Hts_Comet:SetHidden(true)
 
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
@@ -524,6 +569,7 @@ function HowToSunspire.ResetAll()
 
     --reset variables
     listHA = {}
+    cometTime = nil
     iceNumber = 0
     prevIce = 0
     iceTime = nil
@@ -612,6 +658,11 @@ end
 function HowToSunspire.SaveLoc_Spit()
 	sV.OffsetX.Spit = Hts_Spit:GetLeft()
 	sV.OffsetY.Spit = Hts_Spit:GetTop()
+end
+
+function HowToSunspire.SaveLoc_Comet()
+	sV.OffsetX.Comet = Hts_Comet:GetLeft()
+	sV.OffsetY.Comet = Hts_Comet:GetTop()
 end
 
 function HowToSunspire.OnAddOnLoaded(event, addonName)
