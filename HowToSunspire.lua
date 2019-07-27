@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.0.3"
+HowToSunspire.version = "1.0.3.1"
 
 local sV
 ---------------------------
@@ -121,10 +121,10 @@ local cometTime
 function HowToSunspire.Comet(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if (sV.Enable.Comet ~= true) or (hitValue < 100) or --enable
     (abilityId == 121075 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION) or --downstair
-    (abilityId == 117251 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or --molten
-    (abilityId == 123067 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or -- molten
-    (abilityId == 120359 and result ~= ACTION_RESULT_BEGIN and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or --lokke
-    (abilityId == 116636 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION and targetType ~= COMBAT_UNIT_TYPE_PLAYER) then return end --trash
+    (abilityId == 117251 and (result ~= ACTION_RESULT_EFFECT_GAINED_DURATION or targetType ~= COMBAT_UNIT_TYPE_PLAYER)) or --molten
+    (abilityId == 123067 and (result ~= ACTION_RESULT_EFFECT_GAINED_DURATION or targetType ~= COMBAT_UNIT_TYPE_PLAYER)) or -- molten
+    (abilityId == 120359 and (result ~= ACTION_RESULT_BEGIN or targetType ~= COMBAT_UNIT_TYPE_PLAYER)) or --lokke
+    (abilityId == 116636 and (result ~= ACTION_RESULT_EFFECT_GAINED_DURATION or targetType ~= COMBAT_UNIT_TYPE_PLAYER)) then return end --trash
 
     cometTime = GetGameTimeMilliseconds() + hitValue
 
