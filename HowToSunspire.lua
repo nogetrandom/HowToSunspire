@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.0.2"
+HowToSunspire.version = "1.0.3"
 
 local sV
 ---------------------------
@@ -21,6 +21,8 @@ HowToSunspire.Default = {
         Block = 0,
         Spit = 0,
         Comet = 0,
+        Thrash = 0,
+        Atro = 0,
     },
     OffsetY = {
         HA = 0,
@@ -31,6 +33,8 @@ HowToSunspire.Default = {
         Block = 50,
         Spit = -50,
         Comet = -150,
+        Thrash = 100,
+        Atro = -50,
     },
     Enable = {
         HA = true,
@@ -43,6 +47,8 @@ HowToSunspire.Default = {
         Block = true,
         Spit = true,
         Comet = true,
+        Thrash = true,
+        Atro = true,
     }
 }
 
@@ -135,7 +141,7 @@ function HowToSunspire.CometUI()
     local timer = cometTime - currentTime
 
     if timer >= 0 then
-        Hts_Comet_Label:SetText("|ce2fcfbComet: |r" .. tostring(string.format("%.1f", timer / 1000)))
+        Hts_Comet_Label:SetText("|c87ceebComet: |r" .. tostring(string.format("%.1f", timer / 1000)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
         Hts_Comet:SetHidden(true)
@@ -243,6 +249,24 @@ function HowToSunspire.LokkeLaserTimerUI()
     end
 end
 
+--------------------
+---- YOLNAKRIIN ----
+--------------------
+function HowToSunspire.AtroSpawn(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.Atro == true then
+        Hts_Atro:SetHidden(false)
+        PlaySound(SOUNDS.DUEL_START)
+
+		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideAtro")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideAtro", 4500, HowToSunspire.HideAtro)
+    end
+end
+
+function HowToSunspire.HideAtro()
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideAtro")
+    Hts_Atro:SetHidden(true)
+end
+
 ---------------------
 ---- NAHVIINTAAS ----
 ---------------------
@@ -331,6 +355,32 @@ function HowToSunspire.FireSpitUI()
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireSpitTimer")
         Hts_Spit:SetHidden(true)
+    end
+end
+
+local thrashTime
+function HowToSunspire.Thrash(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.Thrash == true then
+        local currentTime = GetGameTimeMilliseconds()
+        thrashTime = currentTime + hitValue
+
+        HowToSunspire.ThrashTimerUI()
+        Hts_Thrash:SetHidden(false)
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ThrashTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "ThrashTimer", 100, HowToSunspire.ThrashTimerUI)
+    end
+end
+
+function HowToSunspire.ThrashTimerUI()
+    local currentTime = GetGameTimeMilliseconds()
+    local timer = thrashTime - currentTime
+
+    if timer >= 0 then
+        Hts_Thrash_Label:SetText("|ce51919Thrash: |r" .. tostring(string.format("%.1f", timer / 1000)))
+    else
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ThrashTimer")
+        Hts_Thrash:SetHidden(true)
     end
 end
 
@@ -475,6 +525,8 @@ function HowToSunspire.InitUI()
     Hts_Block:SetHidden(true)
     Hts_Spit:SetHidden(true)
     Hts_Comet:SetHidden(true)
+    Hts_Thrash:SetHidden(true)
+    Hts_Atro:SetHidden(true)
     Hts_Ha:ClearAnchors()
     Hts_Down:ClearAnchors()
     Hts_Ice:ClearAnchors()
@@ -483,7 +535,9 @@ function HowToSunspire.InitUI()
     Hts_Block:ClearAnchors()
     Hts_Spit:ClearAnchors()
     Hts_Comet:ClearAnchors()
-    
+    Hts_Thrash:ClearAnchors()
+    Hts_Atro:ClearAnchors()
+
     --heavy attacks
     if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
         --recover last position
@@ -541,6 +595,20 @@ function HowToSunspire.InitUI()
     else 
 		Hts_Comet:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Comet, sV.OffsetY.Comet)
     end
+
+    --thrash from nahvin
+    if sV.OffsetX.Thrash ~= HowToSunspire.Default.OffsetX.Thrash and sV.OffsetY.Thrash ~= HowToSunspire.Default.OffsetY.Thrash then 
+		Hts_Thrash:Thrash(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.Thrash, sV.OffsetY.Thrash)
+    else 
+		Hts_Thrash:Thrash(CENTER, GuiRoot, CENTER, sV.OffsetX.Thrash, sV.OffsetY.Thrash)
+    end
+
+    --fire atro spawn
+    if sV.OffsetX.Atro ~= HowToSunspire.Default.OffsetX.Atro and sV.OffsetY.Atro ~= HowToSunspire.Default.OffsetY.Atro then 
+		Hts_Atro:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.Atro, sV.OffsetY.Atro)
+    else 
+		Hts_Atro:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Atro, sV.OffsetY.Atro)
+    end
 end
 
 function HowToSunspire.ResetAll()
@@ -551,8 +619,10 @@ function HowToSunspire.ResetAll()
     Hts_Sweep:SetHidden(true)
     Hts_Laser:SetHidden(true)
     Hts_Block:SetHidden(true)
-    Hts_Spit:SetHidden(true)    
+    Hts_Spit:SetHidden(true)   
     Hts_Comet:SetHidden(true)
+    Hts_Thrash:SetHidden(true)
+    Hts_Atro:SetHidden(true)
 
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
@@ -561,9 +631,11 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideAtro")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideSweepingBreath")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireSpitTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ThrashTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
@@ -580,6 +652,7 @@ function HowToSunspire.ResetAll()
     rightToLeft = nil
     flash = 0
     spitTime = nil
+    thrashTime = nil
     portalTime = nil
     cptDownstair = 0
     interruptTime = nil
@@ -665,6 +738,16 @@ end
 function HowToSunspire.SaveLoc_Comet()
 	sV.OffsetX.Comet = Hts_Comet:GetLeft()
 	sV.OffsetY.Comet = Hts_Comet:GetTop()
+end
+
+function HowToSunspire.SaveLoc_Thrash()
+	sV.OffsetX.Thrash = Hts_Thrash:GetLeft()
+	sV.OffsetY.Thrash = Hts_Thrash:GetTop()
+end
+
+function HowToSunspire.SaveLoc_Atro()
+	sV.OffsetX.Atro = Hts_Atro:GetLeft()
+	sV.OffsetY.Atro = Hts_Atro:GetTop()
 end
 
 function HowToSunspire.OnAddOnLoaded(event, addonName)
