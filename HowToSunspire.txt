@@ -2,7 +2,7 @@
 ## Title: HowTo|c989898Sunspire|r
 ## APIVersion: 100027
 ## Author: Floliroy
-## Version: 1.0.3.1
+## Version: 1.0.3.2
 ## DependsOn: LibAddonMenu-2.0
 ## SavedVariables: HowToSunspireVariables
 
