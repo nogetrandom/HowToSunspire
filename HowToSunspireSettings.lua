@@ -312,7 +312,7 @@ function HowToSunspire.CreateSettingsWindow()
 			end,
 		},
 		{	type = "checkbox",
-			name = "Enable Fire Strom",
+			name = "Enable Fire Storm",
 			tooltip = "To tell you when Nahvintaas do his Fire Storm attack (room explosion).\n|cff0000Note:|r If you are downstair during room explosion, if someone else upstair use this addon you will also have the notification.",
 			default = true,
 			getFunc = function() return sV.Enable.Storm end,
