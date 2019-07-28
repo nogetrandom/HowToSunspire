@@ -730,7 +730,7 @@ function HowToSunspire.OnPlayerActivated()
         end
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE, HowToSunspire.CombatEnded)
         if LibMapPing then
-            LibMapPing:RegisterCallback(HowToSunspire.name .. "PingReceived", HowToSunspire.OnMapPing)
+            LibMapPing:RegisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
         end
     else
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Unregister for all abilities
@@ -738,7 +738,7 @@ function HowToSunspire.OnPlayerActivated()
         end
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE)
         if LibMapPing then
-            LibMapPing:UnregisterCallback(HowToSunspire.name .. "PingReceived", HowToSunspire.OnMapPing)
+            LibMapPing:UnregisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
         end
     end
 
