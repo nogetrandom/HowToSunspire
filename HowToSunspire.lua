@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.0.4"
+HowToSunspire.version = "1.0.5"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
