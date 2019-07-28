@@ -29,6 +29,7 @@ function HowToSunspire.CreateSettingsWindow()
 		Thrash = false,
 		Atro = false,
 		Wipe = false,
+		Storm = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -61,6 +62,7 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_Atro:SetHidden(not newValue)
 						Hts_Thrash:SetHidden(not newValue)
 						Hts_Wipe:SetHidden(not newValue)
+						Hts_Storm:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -151,6 +153,16 @@ function HowToSunspire.CreateSettingsWindow()
 					setFunc = function(newValue)
 						Unlock.Spit = newValue
 						Hts_Spit:SetHidden(not newValue)
+					end,
+				},
+				{	type = "checkbox",
+					name = "Unlock Fire Storm",
+					tooltip = "Use it to set the position of the fire storm.",
+					default = false,
+					getFunc = function() return Unlock.Storm end,
+					setFunc = function(newValue)
+						Unlock.Storm = newValue
+						Hts_Storm:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -297,6 +309,15 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.Spit end,
 			setFunc = function(newValue)
 				sV.Enable.Spit = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Fire Strom",
+			tooltip = "To tell you when Nahvintaas do his Fire Storm attack (room explosion).\n|cff0000Note:|r If you are downstair during room explosion, if someone else upstair use this addon you will also have the notification.",
+			default = true,
+			getFunc = function() return sV.Enable.Storm end,
+			setFunc = function(newValue)
+				sV.Enable.Storm = newValue
 			end,
 		},
 		{

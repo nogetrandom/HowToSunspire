@@ -7,6 +7,9 @@ local HowToSunspire = HowToSunspire
 HowToSunspire.name = "HowToSunspire"
 HowToSunspire.version = "1.0.4"
 
+local WROTHGAR_MAP_INDEX  = 27
+local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
+
 local sV
 ---------------------------
 ---- Variables Default ----
@@ -24,6 +27,7 @@ HowToSunspire.Default = {
         Thrash = 0,
         Atro = 0,
         Wipe = 0,
+        Storm = 0,
     },
     OffsetY = {
         HA = 0,
@@ -37,6 +41,7 @@ HowToSunspire.Default = {
         Thrash = 100,
         Atro = -50,
         Wipe = 150,
+        Storm = -100,
     },
     Enable = {
         HA = true,
@@ -52,6 +57,7 @@ HowToSunspire.Default = {
         Thrash = true,
         Atro = true,
         Wipe = true,
+        Storm = true,
     },
     FontSize = 40,
     wipeCallLater = 90,
@@ -202,7 +208,7 @@ function HowToSunspire.IceTombTimerUI()
     local currentTime = GetGameTimeMilliseconds() / 1000
     local timer = iceTime - currentTime 
 
-    if timer > 9 then
+    if timer >= 9 then
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffin: |r" .. tostring(string.format("%.1f", timer - 9)))
     elseif timer >= 0 then 
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffremain: |r" .. tostring(string.format("%.0f", timer)))
@@ -401,8 +407,11 @@ end
 ------------------------
 local portalTime
 local wipeTime
+local canSend = false
+local canReceive = false
 function HowToSunspire.Portal(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result ~= ACTION_RESULT_BEGIN then return end
+    canSend = true
 
     if sV.Enable.Portal == true then
         portalTime = GetGameTimeMilliseconds() / 1000 + 14
@@ -462,6 +471,9 @@ function HowToSunspire.WipeFinished(_, result, _, _, _, _, _, _, _, targetType, 
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "WipeFinished", EVENT_COMBAT_EVENT)
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "WipeTimer")
         Hts_Wipe:SetHidden(true)
+        if LibMapPing then
+            LibMapPing:RemoveMapPing(MAP_PIN_TYPE_PING)
+        end
     end
 end
 
@@ -497,7 +509,8 @@ local interruptTime
 local interruptUnitId
 function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if result ~= ACTION_RESULT_EFFECT_GAINED_DURATION --[[or downstair ~= true]] then return end
-    
+    canReceive = true
+
     if sV.Enable.Pins == true then
         --register for when it is bashed
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
@@ -565,8 +578,73 @@ end
 ---- SHARE PART FOR EXPLOSION ----
 ----------------------------------
 -- see https://i.ytimg.com/vi/O4tbOvKwZUw/maxresdefault.jpg
+local stormTime
+function HowToSunspire.FireStorm(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
+    if result ~= ACTION_RESULT_BEGIN then return end
 
+    if sV.Enable.Storm == true then
+        stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
 
+        HowToSunspire.FireStormUI()
+        Hts_Storm:SetHidden(false)
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
+    end
+
+    if canSend and LibGPS2 and LibMapPing then
+        canSend = false
+
+        local LGPS = LibGPS2
+        local LMP = LibMapPing
+        LGPS:PushCurrentMap()
+        SetMapToMapListIndex(WROTHGAR_MAP_INDEX)
+    
+        local x = 42 * WROTHGAR_MAP_STEP_SIZE
+        local y = 42 * WROTHGAR_MAP_STEP_SIZE
+        LMP:SetMapPing(MAP_PIN_TYPE_PING, MAP_TYPE_LOCATION_CENTERED, x, y)
+        LGPS:PopCurrentMap()
+    end
+end
+
+function HowToSunspire.FireStormUI()
+    local currentTime = GetGameTimeMilliseconds() / 1000
+    local timer = stormTime - currentTime
+
+    if timer >= 5.2 then
+        Hts_Storm_Label:SetText("|ce51919Fire Storm in: |r" .. tostring(string.format("%.1f", timer - 5.2)))
+    elseif timer >= 0 then
+        Hts_Storm_Label:SetText("|ce51919Fire Storm remain: |r" .. tostring(string.format("%.1f", timer)))
+    else
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
+        Hts_Storm:SetHidden(true)
+    end
+end
+
+function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
+    if not canReceive or not LibGPS2 or not LibMapPing or not isLocalPlayerOwner then return end
+    canReceive = false
+
+    local LGPS = LibGPS2
+    local LMP = LibMapPing
+
+	if pingType == MAP_PIN_TYPE_PING then
+		LGPS:PushCurrentMap()
+		SetMapToMapListIndex(WROTHGAR_MAP_INDEX)
+        local x, y = LMP:GetMapPing(MAP_PIN_TYPE_PING, pingTag)
+
+        if LMP:IsPositionOnMap(x, y) and x == y == 42 and sV.Enable.Storm == true then --and name ~= GetUnitDisplayName("player") then
+            stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
+
+            HowToSunspire.FireStormUI()
+            Hts_Storm:SetHidden(false)
+
+            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
+            EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
+        end
+        LGPS:PopCurrentMap()
+    end
+end
 --------------
 ---- INIT ----
 --------------
@@ -583,6 +661,7 @@ function HowToSunspire.ResetAll()
     Hts_Thrash:SetHidden(true)
     Hts_Atro:SetHidden(true)
     Hts_Wipe:SetHidden(true)
+    Hts_Storm:SetHidden(true)
 
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
@@ -602,6 +681,11 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
+
+    if LibMapPing then
+        LibMapPing:RemoveMapPing(MAP_PIN_TYPE_PING)
+    end
 
     --reset variables
     listHA = {}
@@ -622,6 +706,9 @@ function HowToSunspire.ResetAll()
     interruptTime = nil
     interruptUnitId = nil
     pinsTime = nil
+    stormTime = nil
+    canReceive = false
+    canSend = false
 end
 
 function HowToSunspire.CombatEnded()
@@ -640,11 +727,17 @@ function HowToSunspire.OnPlayerActivated()
             EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, k)
         end
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE, HowToSunspire.CombatEnded)
+        if LibMapPing then
+            LibMapPing:RegisterCallback(HowToSunspire.name .. "PingReceived", HowToSunspire.OnMapPing)
+        end
     else
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Unregister for all abilities
             EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT)
         end
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE)
+        if LibMapPing then
+            LibMapPing:UnregisterCallback(HowToSunspire.name .. "PingReceived", HowToSunspire.OnMapPing)
+        end
     end
 
 end
@@ -657,11 +750,15 @@ function HowToSunspire:Initialize()
 	HowToSunspire.CreateSettingsWindow()
 	--UI
     HowToSunspire.InitUI()
-    
+
+    if LibMapPing then 
+        LibMapPing:MutePing(MAP_PIN_TYPE_PING)
+    end
+
     --Events
     EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Activated", EVENT_PLAYER_ACTIVATED, HowToSunspire.OnPlayerActivated)
-    
-	EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name, EVENT_ADD_ON_LOADED)
+
+    EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name, EVENT_ADD_ON_LOADED)
 end
 
 function HowToSunspire.OnAddOnLoaded(event, addonName)

@@ -17,6 +17,7 @@ function HowToSunspire.InitUI()
     Hts_Thrash:SetHidden(true)
     Hts_Atro:SetHidden(true)
     Hts_Wipe:SetHidden(true)
+    Hts_Storm:SetHidden(true)
     Hts_Ha:ClearAnchors()
     Hts_Down:ClearAnchors()
     Hts_Ice:ClearAnchors()
@@ -28,6 +29,7 @@ function HowToSunspire.InitUI()
     Hts_Thrash:ClearAnchors()
     Hts_Atro:ClearAnchors()
     Hts_Wipe:ClearAnchors()
+    Hts_Storm:ClearAnchors()
 
     --heavy attacks
     if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
@@ -108,6 +110,13 @@ function HowToSunspire.InitUI()
 		Hts_Wipe:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Wipe, sV.OffsetY.Wipe)
     end
 
+    --room explosion on last boss
+    if sV.OffsetX.Storm ~= HowToSunspire.Default.OffsetX.Storm and sV.OffsetY.Storm ~= HowToSunspire.Default.OffsetY.Storm then 
+		Hts_Storm:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.Storm, sV.OffsetY.Storm)
+    else 
+		Hts_Storm:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.Storm, sV.OffsetY.Storm)
+    end
+
     HowToSunspire.SetFontSize(Hts_Ha_Label, sV.FontSize)
     HowToSunspire.SetFontSize(Hts_Down_Label, sV.FontSize)
     HowToSunspire.SetFontSize(Hts_Ice_Label, sV.FontSize)
@@ -119,6 +128,7 @@ function HowToSunspire.InitUI()
     HowToSunspire.SetFontSize(Hts_Thrash_Label, sV.FontSize)
     HowToSunspire.SetFontSize(Hts_Atro_Label, sV.FontSize)
     HowToSunspire.SetFontSize(Hts_Wipe_Label, sV.FontSize)
+    HowToSunspire.SetFontSize(Hts_Storm_Label, sV.FontSize)
 end
 
 function HowToSunspire.SetFontSize(label, size)
@@ -180,4 +190,9 @@ end
 function HowToSunspire.SaveLoc_Wipe()
 	sV.OffsetX.Wipe = Hts_Wipe:GetLeft()
 	sV.OffsetY.Wipe = Hts_Wipe:GetTop()
+end
+
+function HowToSunspire.SaveLoc_Storm()
+	sV.OffsetX.Storm = Hts_Storm:GetLeft()
+	sV.OffsetY.Storm = Hts_Storm:GetTop()
 end

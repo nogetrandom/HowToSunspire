@@ -29,6 +29,7 @@ HowToSunspire.AbilitiesToTrack = {
     [118860] = HowToSunspire.FireSpit, --when nahvin spit fire ball on you that will pop an atronach during lokke fight
     [115592] = HowToSunspire.FireSpit, --same but during nahvin fight
     [118562] = HowToSunspire.Thrash, -- thrash of nahvin
+    [118884] = HowToSunspire.FireStorm, --room explosion of nahvin
 
     [121676] = HowToSunspire.Portal, --Portal on last boss
     [121213] = HowToSunspire.IsDownstair, --Portal used
