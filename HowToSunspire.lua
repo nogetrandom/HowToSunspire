@@ -115,11 +115,13 @@ end
 
 function HowToSunspire.Block(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.Block == true then
-        Hts_Block:SetHidden(false)
-		PlaySound(SOUNDS.DUEL_START)
-
-		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
-        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideBlock", 3000, HowToSunspire.HideBlock)
+        zo_callLater(function ()
+            Hts_Block:SetHidden(false)
+            PlaySound(SOUNDS.DUEL_START)
+            
+            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
+            EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideBlock", 2500, HowToSunspire.HideBlock)
+        end, hitValue)
     end
 end
 
