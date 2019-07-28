@@ -622,6 +622,8 @@ function HowToSunspire.FireStormUI()
 end
 
 function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
+    canSend = false
+    
     if not canReceive or not LibGPS2 or not LibMapPing or not isLocalPlayerOwner then return end
     canReceive = false
 
