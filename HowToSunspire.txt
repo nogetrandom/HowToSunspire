@@ -2,7 +2,7 @@
 ## Title: HowTo|c989898Sunspire|r
 ## APIVersion: 100027
 ## Author: Floliroy
-## Version: 1.0.3.2
+## Version: 1.0.4
 ## DependsOn: LibAddonMenu-2.0
 ## SavedVariables: HowToSunspireVariables
 
@@ -18,5 +18,6 @@ Lib/LibCustomTitles/Titles/Floliroy.lua
 
 HowToSunspireSettings.lua
 HowToSunspire.lua
+HowToSunspireUI.lua
 HowToSunspireAbilities.lua
 HowToSunspire.xml

@@ -28,13 +28,14 @@ function HowToSunspire.CreateSettingsWindow()
 		Comet = false,
 		Thrash = false,
 		Atro = false,
+		Wipe = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
 	local optionsData = {
 		{
 			type = "header",
-			name = "Reposition UI",
+			name = "User Interface",
 		},
 		{	type = "description",
 			text = "Here you can change the position of every notifications, you can unlock everything at same time, or only some alerts that you want.",
@@ -59,6 +60,7 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_Comet:SetHidden(not newValue)
 						Hts_Atro:SetHidden(not newValue)
 						Hts_Thrash:SetHidden(not newValue)
+						Hts_Wipe:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -82,7 +84,7 @@ function HowToSunspire.CreateSettingsWindow()
 					end,
 				},
 				{	type = "checkbox",
-					name = "Unlock Comet",
+					name = "Unlock Comet / Meteor",
 					tooltip = "Use it to set the position of the comet notification.",
 					default = false,
 					getFunc = function() return Unlock.Comet end,
@@ -150,7 +152,17 @@ function HowToSunspire.CreateSettingsWindow()
 						Unlock.Spit = newValue
 						Hts_Spit:SetHidden(not newValue)
 					end,
-				},	
+				},
+				{	type = "checkbox",
+					name = "Unlock Wipe Countdown",
+					tooltip = "Use it to set the position of the Wipe Countdown.",
+					default = false,
+					getFunc = function() return Unlock.Wipe end,
+					setFunc = function(newValue)
+						Unlock.Wipe = newValue
+						Hts_Wipe:SetHidden(not newValue)
+					end,
+				},
 				{	type = "checkbox",
 					name = "Unlock Portals Notif",
 					tooltip = "Use it to set the position of all the Downstairs Notifications.",
@@ -160,8 +172,32 @@ function HowToSunspire.CreateSettingsWindow()
 						Unlock.Portal = newValue
 						Hts_Down:SetHidden(not newValue)
 					end,
-				},				
+				},
 			},
+		},
+		{	type = "slider",
+            name = "Notifications Size",
+            tooltip = "Choose here the size of all the notifications.",
+            getFunc = function() return sV.FontSize end,
+            setFunc = function(newValue)
+				sV.FontSize = newValue
+				HowToSunspire.SetFontSize(Hts_Ha_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Down_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Ice_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Sweep_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Laser_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Block_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Spit_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Comet_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Thrash_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Atro_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Wipe_Label, newValue)
+			end,
+            min = 32,
+            max = 56,
+            step = 2,
+            default = 40,
+            width = "full",
 		},
 		{
 			type = "header",
@@ -189,11 +225,11 @@ function HowToSunspire.CreateSettingsWindow()
 			end,
 		},
 		{	type = "checkbox",
-			name = "Enable Comet",
-			tooltip = "To enable the tracking of comet from mage trash, lokkestiiz, and add downstair.\nFor mage and lokke it will only track if it's on you, for the add downstair it will track for everyone.",
+			name = "Enable Comet / Meteor",
+			tooltip = "To enable the tracking of comet from mage trash, lokkestiiz, add downstair, and molten meteor from nahviintaas.",
 			default = true,
 			getFunc = function() return sV.Enable.Comet end,
-			setFunc = function(newValue)  
+			setFunc = function(newValue)
 				sV.Enable.Comet = newValue
 			end,
 		},
@@ -266,6 +302,28 @@ function HowToSunspire.CreateSettingsWindow()
 		{
 			type = "header",
 			name = "Downstair Notifications",
+		},
+		{	type = "checkbox",
+			name = "Enable Wipe Countdown",
+			tooltip = "It will show you a timer with time remaining before wiping downstair.",
+			default = true,
+			getFunc = function() return sV.Enable.Wipe end,
+			setFunc = function(newValue)
+				sV.Enable.Wipe = newValue
+			end,
+		},
+		{	type = "slider",
+            name = "Time Remaining to Show",
+            tooltip = "Basicly it will only show the wipe notifications if the timer is lower than the value you set here.",
+            getFunc = function() return sV.wipeCallLater end,
+			setFunc = function(newValue)
+				sV.wipeCallLater = newValue
+			end,
+            min = 10,
+            max = 90,
+            step = 1,
+            default = 90,
+            width = "full",
 		},
 		{	type = "description",
 			text = "To track when portal spawn, and then if you are downstair you will track interrupt to do on the add and when the next pins are going to hit.",
