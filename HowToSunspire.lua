@@ -158,7 +158,7 @@ function HowToSunspire.CometUI()
         if isComet then
             Hts_Comet_Label:SetText("|c87ceebComet: |r" .. tostring(string.format("%.1f", timer / 1000)))
         else
-            Hts_Comet_Label:SetText("|cf51414bMeteor: |r" .. tostring(string.format("%.1f", timer / 1000)))
+            Hts_Comet_Label:SetText("|cf51414Meteor: |r" .. tostring(string.format("%.1f", timer / 1000)))
         end
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
@@ -623,7 +623,7 @@ end
 
 function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
     canSend = false
-    
+
     if not canReceive or not LibGPS2 or not LibMapPing or not isLocalPlayerOwner then return end
     canReceive = false
 
