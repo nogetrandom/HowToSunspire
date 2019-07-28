@@ -350,7 +350,7 @@ end
 
 local spitTime
 function HowToSunspire.FireSpit(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
-    if targetType ~= COMBAT_UNIT_TYPE_PLAYER or hitValue < 100 or sV.Enable.Spit ~= true then return end
+    if targetType ~= COMBAT_UNIT_TYPE_PLAYER or hitValue < 300 or sV.Enable.Spit ~= true then return end
 
 	if result == ACTION_RESULT_BEGIN then
 		spitTime = GetGameTimeMilliseconds() + hitValue
@@ -579,8 +579,15 @@ end
 ----------------------------------
 -- see https://i.ytimg.com/vi/O4tbOvKwZUw/maxresdefault.jpg
 local stormTime
+local firstStormTrigger = true
 function HowToSunspire.FireStorm(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if result ~= ACTION_RESULT_BEGIN then return end
+
+    if firstStormTrigger == true then
+        firstStormTrigger = false
+        return
+    end
+    firstStormTrigger = true
 
     if sV.Enable.Storm == true then
         stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
@@ -713,6 +720,7 @@ function HowToSunspire.ResetAll()
     stormTime = nil
     canReceive = false
     canSend = false
+    firstStormTrigger = true
 end
 
 function HowToSunspire.CombatEnded()
