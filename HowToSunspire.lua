@@ -630,13 +630,14 @@ function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
     local LGPS = LibGPS2
     local LMP = LibMapPing
 
-	if pingType == MAP_PIN_TYPE_PING then
+    if pingType == MAP_PIN_TYPE_PING then
+        d("Enter in Received Function")
 		LGPS:PushCurrentMap()
 		SetMapToMapListIndex(WROTHGAR_MAP_INDEX)
         local x, y = LMP:GetMapPing(MAP_PIN_TYPE_PING, pingTag)
-        x = math.floor(x / WROTHGAR_MAP_STEP_SIZE)
-        y = math.floor(y / WROTHGAR_MAP_STEP_SIZE)
-        if LMP:IsPositionOnMap(x, y) and x == y == 42 and sV.Enable.Storm == true then --and name ~= GetUnitDisplayName("player") then
+        local isGoodPosition = x == 42 * WROTHGAR_MAP_STEP_SIZE and y == 42 * WROTHGAR_MAP_STEP_SIZE
+
+        if LMP:IsPositionOnMap(x, y) and isGoodPosition and sV.Enable.Storm == true then --and name ~= GetUnitDisplayName("player") then
             stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
 
             HowToSunspire.FireStormUI()
