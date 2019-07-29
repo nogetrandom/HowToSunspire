@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.0.5"
+HowToSunspire.version = "1.0.6"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -512,6 +512,9 @@ local interruptUnitId
 function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if result ~= ACTION_RESULT_EFFECT_GAINED_DURATION --[[or downstair ~= true]] then return end
     canReceive = true
+    if LibMapPing then
+        LibMapPing:RegisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
+    end
 
     if sV.Enable.Pins == true then
         --register for when it is bashed
@@ -631,29 +634,32 @@ function HowToSunspire.FireStormUI()
 end
 
 function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
-    canSend = false
-
-    if not canReceive or not LibGPS2 or not LibMapPing or not isLocalPlayerOwner then return end
-    canReceive = false
-
+    if not canReceive or not LibGPS2 or not LibMapPing or isLocalPlayerOwner or not sV.Enable.Storm then return end
+    
     local LGPS = LibGPS2
     local LMP = LibMapPing
 
     if pingType == MAP_PIN_TYPE_PING then
-        d("Enter in Received Function")
 		LGPS:PushCurrentMap()
 		SetMapToMapListIndex(WROTHGAR_MAP_INDEX)
         local x, y = LMP:GetMapPing(MAP_PIN_TYPE_PING, pingTag)
-        local isGoodPosition = x == 42 * WROTHGAR_MAP_STEP_SIZE and y == 42 * WROTHGAR_MAP_STEP_SIZE
 
-        if LMP:IsPositionOnMap(x, y) and isGoodPosition and sV.Enable.Storm == true then --and name ~= GetUnitDisplayName("player") then
-            stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
+        if LMP:IsPositionOnMap(x, y) then
+            d("Enter in Received Function")
+            canSend = false
 
-            HowToSunspire.FireStormUI()
-            Hts_Storm:SetHidden(false)
+            if x == 42 * WROTHGAR_MAP_STEP_SIZE and y == 42 * WROTHGAR_MAP_STEP_SIZE then
+                canReceive = false
+                LibMapPing:UnregisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
 
-            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
-            EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
+                stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
+
+                HowToSunspire.FireStormUI()
+                Hts_Storm:SetHidden(false)
+
+                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
+                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
+            end
         end
         LGPS:PopCurrentMap()
     end
@@ -741,17 +747,11 @@ function HowToSunspire.OnPlayerActivated()
             EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, k)
         end
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE, HowToSunspire.CombatEnded)
-        if LibMapPing then
-            LibMapPing:RegisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
-        end
     else
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Unregister for all abilities
             EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT)
         end
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE)
-        if LibMapPing then
-            LibMapPing:UnregisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
-        end
     end
 
 end
