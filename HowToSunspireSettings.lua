@@ -39,10 +39,10 @@ function HowToSunspire.CreateSettingsWindow()
 			name = "User Interface",
 		},
 		{	type = "description",
-			text = "Here you can change the position of every notifications, you can unlock everything at same time, or only some alerts that you want.",
+			text = "Change settings and notification positions here.",
 		},
 		{	type = "submenu",
-			name = "Unlocks",
+			name = "Unlock Positions",
 			controls = {
 				{	type = "checkbox",
 					name = "Unlock Everything",
@@ -76,8 +76,8 @@ function HowToSunspire.CreateSettingsWindow()
 					end,
 				},
 				{	type = "checkbox",
-					name = "Unlock Red Cats's Jump",
-					tooltip = "Use it to set the position of the block text.",
+					name = "Unlock Jode´s Fire-Fang Jump",
+					tooltip = "Use it to set the position of the Block text.",
 					default = false,
 					getFunc = function() return Unlock.Block end,
 					setFunc = function(newValue)
@@ -87,7 +87,7 @@ function HowToSunspire.CreateSettingsWindow()
 				},
 				{	type = "checkbox",
 					name = "Unlock Comet / Meteor",
-					tooltip = "Use it to set the position of the comet notification.",
+					tooltip = "Use it to set the position of the Comet and Meteor notifications.",
 					default = false,
 					getFunc = function() return Unlock.Comet end,
 					setFunc = function(newValue)
@@ -97,7 +97,7 @@ function HowToSunspire.CreateSettingsWindow()
 				},
 				{	type = "checkbox",
 					name = "Unlock Ice Tomb",
-					tooltip = "Use it to set the position of the IceTimer.",
+					tooltip = "Use it to set the position of the Ice Tomb timer.",
 					default = false,
 					getFunc = function() return Unlock.IceTomb end,
 					setFunc = function(newValue)
@@ -107,7 +107,7 @@ function HowToSunspire.CreateSettingsWindow()
 				},
 				{	type = "checkbox",
 					name = "Unlock Laser",
-					tooltip = "Use it to set the position of the laser that you have to block.",
+					tooltip = "Use it to set the position of the Laser that you have to block.",
 					default = false,
 					getFunc = function() return Unlock.LaserLokke end,
 					setFunc = function(newValue)
@@ -117,7 +117,7 @@ function HowToSunspire.CreateSettingsWindow()
 				},
 				{	type = "checkbox",
 					name = "Unlock Fire Atro Spawn",
-					tooltip = "Use it to set the position of the fire atro spawn text.",
+					tooltip = "Use it to set the position of the Fire Atro spawn text.",
 					default = false,
 					getFunc = function() return Unlock.Atro end,
 					setFunc = function(newValue)
@@ -137,7 +137,7 @@ function HowToSunspire.CreateSettingsWindow()
 				},
 				{	type = "checkbox",
 					name = "Unlock Thrash",
-					tooltip = "Use it to set the position of the thrash.",
+					tooltip = "Use it to set the position of the Thrash.",
 					default = false,
 					getFunc = function() return Unlock.Thrash end,
 					setFunc = function(newValue)
@@ -147,7 +147,7 @@ function HowToSunspire.CreateSettingsWindow()
 				},
 				{	type = "checkbox",
 					name = "Unlock Fire Spit",
-					tooltip = "Use it to set the position of the fire spit that will pop an atronach.",
+					tooltip = "Use it to set the position of the Fire Spit that will pop an atronach.",
 					default = false,
 					getFunc = function() return Unlock.Spit end,
 					setFunc = function(newValue)
@@ -156,8 +156,8 @@ function HowToSunspire.CreateSettingsWindow()
 					end,
 				},
 				{	type = "checkbox",
-					name = "Unlock Fire Storm",
-					tooltip = "Use it to set the position of the fire storm.",
+					name = "Unlock Flame Storm",
+					tooltip = "Use it to set the position of the Fire Storm.",
 					default = false,
 					getFunc = function() return Unlock.Storm end,
 					setFunc = function(newValue)
@@ -167,7 +167,7 @@ function HowToSunspire.CreateSettingsWindow()
 				},
 				{	type = "checkbox",
 					name = "Unlock Wipe Countdown",
-					tooltip = "Use it to set the position of the Wipe Countdown.",
+					tooltip = "Use it to set the position of the Wipe countdown.",
 					default = false,
 					getFunc = function() return Unlock.Wipe end,
 					setFunc = function(newValue)
@@ -176,8 +176,8 @@ function HowToSunspire.CreateSettingsWindow()
 					end,
 				},
 				{	type = "checkbox",
-					name = "Unlock Portals Notif",
-					tooltip = "Use it to set the position of all the Downstairs Notifications.",
+					name = "Unlock Portals Notification",
+					tooltip = "Use it to set the position of all the Downstairs notifications.",
 					default = false,
 					getFunc = function() return Unlock.Portal end,
 					setFunc = function(newValue)
@@ -213,14 +213,14 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{
 			type = "header",
-			name = "Globals Notifications",
+			name = "Global Notifications",
 		},
 		{	type = "description",
-			text = "Here you can track mechanics that can happen kinda everywhere in the trial.",
+			text = "Edit trialwide mechanics here.",
 		},
 		{	type = "checkbox",
 			name = "Enable HA Tracking",
-			tooltip = "To track all major heavy attacks in sunspire.\nIt include HA from all dragons, 1H & Shield, hulks on last boss, and cone of the add downstair on last boss.",
+			tooltip = "Tracks all Heavy Attacks including bosses and the enternal servant.",
 			default = true,
 			getFunc = function() return sV.Enable.HA end,
 			setFunc = function(newValue)  
@@ -228,8 +228,8 @@ function HowToSunspire.CreateSettingsWindow()
 			end,
 		},
 		{	type = "checkbox",
-			name = "Enable Red Cats's Jump",
-			tooltip = "To enable or not the tracking of the jump from red cats that you need to block.",
+			name = "Enable Jode´s Fire-Fang Jump",
+			tooltip = "Tracks the red cats Jump that you have to block.",
 			default = true,
 			getFunc = function() return sV.Enable.Block end,
 			setFunc = function(newValue)  
@@ -238,7 +238,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Enable Comet / Meteor",
-			tooltip = "To enable the tracking of comet from mage trash, lokkestiiz, add downstair, and molten meteor from nahviintaas.",
+			tooltip = "Tracks ALL Meteors and Comets in the trial including Nahvis Molten Meteor.",
 			default = true,
 			getFunc = function() return sV.Enable.Comet end,
 			setFunc = function(newValue)
@@ -251,7 +251,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Enable Ice Tomb",
-			tooltip = "To enable or not the tracking of when Ice Tomb spawn and how many time is remaining to take it.",
+			tooltip = "Tracks the Ice Tombs spawn and remaining time to pick it up.",
 			default = true,
 			getFunc = function() return sV.Enable.IceTomb end,
 			setFunc = function(newValue)
@@ -260,7 +260,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Enable Laser",
-			tooltip = "To track when Lokkestiiz will cast the next laser.",
+			tooltip = "Counts down the remaining time until Lokke´s beam attack.",
 			default = true,
 			getFunc = function() return sV.Enable.LaserLokke end,
 			setFunc = function(newValue)
@@ -273,7 +273,7 @@ function HowToSunspire.CreateSettingsWindow()
         },
 		{	type = "checkbox",
 			name = "Enable Fire Atro Spawn",
-			tooltip = "To enable or not the tracking of the fire atronarch spawn.",
+			tooltip = "Tracks the Fire Atro spawn.",
 			default = true,
 			getFunc = function() return sV.Enable.Atro end,
 			setFunc = function(newValue)
@@ -286,7 +286,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Enable Sweeping Breath",
-			tooltip = "To enable or not the tracking of Sweeping Breath, and from which side it comes from.",
+			tooltip = "Notifies you about the Sweeping Breath and its direction.",
 			default = true,
 			getFunc = function() return sV.Enable.SweepBreath end,
 			setFunc = function(newValue)
@@ -295,7 +295,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Enable Thrash",
-			tooltip = "To track when Nahviintaas will cast the next Thrash that you have to block or rolldodge.",
+			tooltip = "Tracks Nahviin's Thrash that needs to be blocked or dogded.",
 			default = true,
 			getFunc = function() return sV.Enable.Thrash end,
 			setFunc = function(newValue)
@@ -304,7 +304,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Enable Fire Spit",
-			tooltip = "To tell you when Nahvintaas will spit a fire ball on you that will then create an AoE, and will pop a fire atronach.\n|cff0000Note:|r It will also track the same mechanic on Lokkestiiz HM.",
+			tooltip = "Tracks the Fire Spit attack which summons an AoE and then an atronach.\n|cff0000Note:|r Also tracks this mechanic on Lokkestiiz.",
 			default = true,
 			getFunc = function() return sV.Enable.Spit end,
 			setFunc = function(newValue)
@@ -312,8 +312,8 @@ function HowToSunspire.CreateSettingsWindow()
 			end,
 		},
 		{	type = "checkbox",
-			name = "Enable Fire Storm",
-			tooltip = "To tell you when Nahvintaas do his Fire Storm attack (room explosion).\n|cff0000Note:|r If you are downstair during room explosion, if someone else upstair use this addon you will also have the notification.",
+			name = "Enable Fire Strom",
+			tooltip = "Tracks Nahvis arena-sized AoE.\n|cff0000Note:|r Will also notify you while in portal if you have LibMapPing and LibGPS enable, and someone using this addon upstair.",
 			default = true,
 			getFunc = function() return sV.Enable.Storm end,
 			setFunc = function(newValue)
@@ -326,7 +326,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Enable Wipe Countdown",
-			tooltip = "It will show you a timer with time remaining before wiping downstair.",
+			tooltip = "Tracks the remaining time you have to kill the Eternal Servant.",
 			default = true,
 			getFunc = function() return sV.Enable.Wipe end,
 			setFunc = function(newValue)
@@ -335,7 +335,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "slider",
             name = "Time Remaining to Show",
-            tooltip = "Basicly it will only show the wipe notifications if the timer is lower than the value you set here.",
+            tooltip = "Only starts counting down if set to a lower than that.",
             getFunc = function() return sV.wipeCallLater end,
 			setFunc = function(newValue)
 				sV.wipeCallLater = newValue
@@ -347,11 +347,11 @@ function HowToSunspire.CreateSettingsWindow()
             width = "full",
 		},
 		{	type = "description",
-			text = "To track when portal spawn, and then if you are downstair you will track interrupt to do on the add and when the next pins are going to hit.",
+			text = "\nAll mechanics involving the portal during Nahviintaas bossfight.",
 		},
 		{	type = "checkbox",
 			name = "Enable Portal",
-			tooltip = "To enable or not the tracking of when portal spawn and how many time is remaining to take it.",
+			tooltip = "Tracks the Portal spawn aswell as the remaining time until it expires.",
 			default = true,
 			getFunc = function() return sV.Enable.Portal end,
 			setFunc = function(newValue)
@@ -360,7 +360,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Enable Interrupt Down",
-			tooltip = "To enable or not the tracking of the attack to interrupt downstair.",
+			tooltip = "Tracks the remaining time to Interupt the Eternal Servant.",
 			default = true,
 			getFunc = function() return sV.Enable.Interrupt end,
 			setFunc = function(newValue)
@@ -369,7 +369,7 @@ function HowToSunspire.CreateSettingsWindow()
 		},
 		{	type = "checkbox",
 			name = "Enable Pins Tracking",
-			tooltip = "To enable or not the tracking of the next pins downstair (stack just before end of timer).",
+			tooltip = "Counts down the remaining time until the next Pins.",
 			default = true,
 			getFunc = function() return sV.Enable.Pins end,
 			setFunc = function(newValue)
