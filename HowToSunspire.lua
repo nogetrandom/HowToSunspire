@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.0.6"
+HowToSunspire.version = "1.1"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -645,7 +645,7 @@ function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
         local x, y = LMP:GetMapPing(MAP_PIN_TYPE_PING, pingTag)
 
         if LMP:IsPositionOnMap(x, y) then
-            d("Enter in Received Function")
+            --d("Enter in Received Function")
             canSend = false
 
             --if x == 42 * WROTHGAR_MAP_STEP_SIZE and y == 42 * WROTHGAR_MAP_STEP_SIZE then
