@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.1"
+HowToSunspire.version = "1.1.1"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -28,6 +28,7 @@ HowToSunspire.Default = {
         Atro = 0,
         Wipe = 0,
         Storm = 0,
+        Geyser = 0,
     },
     OffsetY = {
         HA = 0,
@@ -42,6 +43,7 @@ HowToSunspire.Default = {
         Atro = -50,
         Wipe = 150,
         Storm = -100,
+        Geyser = 50,
     },
     Enable = {
         HA = true,
@@ -58,6 +60,7 @@ HowToSunspire.Default = {
         Atro = true,
         Wipe = true,
         Storm = true,
+        Geyser = true,
     },
     FontSize = 40,
     wipeCallLater = 90,
@@ -287,6 +290,33 @@ function HowToSunspire.HideAtro()
     Hts_Atro:SetHidden(true)
 end
 
+function HowToSunspire.LavaGeyser(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.Geyser == true then
+        if targetType == COMBAT_UNIT_TYPE_PLAYER then
+            Hts_Geyser:SetHidden(false)
+            PlaySound(SOUNDS.DUEL_START)
+
+            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideGeyser")
+            EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideGeyser", 2500, HowToSunspire.HideGeyser)
+        elseif HowToSunspire.groupMembers[targetName] then 
+            --copied from CCA
+            local x1, y1 = GetMapPlayerPosition("player")
+            local x2, y2 = GetMapPlayerPosition(HowToSunspire.groupMembers[targetName].unitTag)
+            if (math.sqrt((x1 - x2)^2 + (y1 - y2)^2) * 1000) < 2.8 then
+                Hts_Geyser:SetHidden(false)
+                PlaySound(SOUNDS.DUEL_START)
+        
+                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideGeyser")
+                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideGeyser", 2500, HowToSunspire.HideGeyser)
+            end
+        end
+    end
+end
+
+function HowToSunspire.HideGeyser()
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideGeyser")
+    Hts_Geyser:SetHidden(true)
+end
 ---------------------
 ---- NAHVIINTAAS ----
 ---------------------
@@ -649,16 +679,16 @@ function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
             canSend = false
 
             --if x == 42 * WROTHGAR_MAP_STEP_SIZE and y == 42 * WROTHGAR_MAP_STEP_SIZE then
-                canReceive = false
-                LibMapPing:UnregisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
+            canReceive = false
+            LibMapPing:UnregisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
 
-                stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
+            stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
 
-                HowToSunspire.FireStormUI()
-                Hts_Storm:SetHidden(false)
+            HowToSunspire.FireStormUI()
+            Hts_Storm:SetHidden(false)
 
-                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
-                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
+            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
+            EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
             --end
         end
         LGPS:PopCurrentMap()
@@ -681,6 +711,7 @@ function HowToSunspire.ResetAll()
     Hts_Atro:SetHidden(true)
     Hts_Wipe:SetHidden(true)
     Hts_Storm:SetHidden(true)
+    Hts_Geyser:SetHidden(true)
 
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
@@ -690,6 +721,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideAtro")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideGeyser")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideSweepingBreath")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireSpitTimer")
@@ -702,9 +734,9 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
 
-    if LibMapPing then
+    --[[if LibMapPing then
         LibMapPing:RemoveMapPing(MAP_PIN_TYPE_PING)
-    end
+    end]]
 
     --reset variables
     listHA = {}
@@ -731,6 +763,18 @@ function HowToSunspire.ResetAll()
     firstStormTrigger = true
 end
 
+function HowToSunspire.GetGroupTags()
+    local groupSize = GetGroupSize()
+
+    HowToSunspire.groupMembers = {}
+    if groupSize ~= 0 then
+        for i = 1, groupSize do 
+            HowToSunspire.groupMembers[GetUnitName("group" .. i)].displayName = GetUnitDisplayName("group" .. i)  
+            HowToSunspire.groupMembers[GetUnitName("group" .. i)].unitTag = "group" .. i
+        end
+    end
+end
+
 function HowToSunspire.CombatEnded()
     zo_callLater(function() 
         if (not IsUnitInCombat("player")) then 
@@ -747,11 +791,15 @@ function HowToSunspire.OnPlayerActivated()
             EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, k)
         end
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE, HowToSunspire.CombatEnded)
+
+        HowToSunspire.GetGroupTags()
+        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "GroupTags", EVENT_GROUP_UPDATE, HowToSunspire.GetGroupTags)
     else
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Unregister for all abilities
             EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT)
         end
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE)
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "GroupTags", EVENT_GROUP_UPDATE)
     end
 
 end

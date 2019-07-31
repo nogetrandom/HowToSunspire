@@ -157,5 +157,18 @@
             </Controls>			
         </TopLevelControl>
 
+        <TopLevelControl name="Hts_Geyser" resizeToFitDescendents="true" mouseEnabled="true" movable="true" clampedToScreen="true">
+            <Dimensions x="300" y="60" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" offsetX="0" offsetY="50" />
+            <OnMoveStop>
+				HowToSunspire.SaveLoc_Geyser()
+			</OnMoveStop>
+            <Controls>
+                <Label name="$(parent)_Label" width="200" height="40" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" inheritAlpha="true" color="FF1493" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="Lava Geyser">
+                    <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
+                </Label>
+            </Controls>			
+        </TopLevelControl>
+
     </Controls>
 </GuiXml>

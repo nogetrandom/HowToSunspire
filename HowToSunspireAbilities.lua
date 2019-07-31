@@ -23,6 +23,7 @@ HowToSunspire.AbilitiesToTrack = {
     [122822] = HowToSunspire.LokkeLaser, --third jump of lokke
 
     [119549] = HowToSunspire.AtroSpawn, -- Fire Atro
+    [124546] = HowToSunspire.LavaGeyser, --lava geyser from fire atro
    
     [120188] = HowToSunspire.SweepingBreath, --fire sweeping breath >>>>
     [118743] = HowToSunspire.SweepingBreath, --fire sweeping breath <<<<

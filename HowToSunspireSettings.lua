@@ -30,6 +30,7 @@ function HowToSunspire.CreateSettingsWindow()
 		Atro = false,
 		Wipe = false,
 		Storm = false,
+		Geyser = true,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -63,6 +64,7 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_Thrash:SetHidden(not newValue)
 						Hts_Wipe:SetHidden(not newValue)
 						Hts_Storm:SetHidden(not newValue)
+						Hts_Geyser:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -123,6 +125,16 @@ function HowToSunspire.CreateSettingsWindow()
 					setFunc = function(newValue)
 						Unlock.Atro = newValue
 						Hts_Atro:SetHidden(not newValue)
+					end,
+				},
+				{	type = "checkbox",
+					name = "Unlock Lava Geyser",
+					tooltip = "Use it to set the position of the Lava Geyser notification.",
+					default = false,
+					getFunc = function() return Unlock.Geyser end,
+					setFunc = function(newValue)
+						Unlock.Geyser = newValue
+						Hts_Geyser:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -278,6 +290,15 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.Atro end,
 			setFunc = function(newValue)
 				sV.Enable.Atro = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Lava Geyser",
+			tooltip = "Will tell you when a Lava Geyser is about to hit near to you.\n|cff0000Note:|r Tracks this mechanic on all fights from Sunspire.",
+			default = true,
+			getFunc = function() return sV.Enable.Geyser end,
+			setFunc = function(newValue)
+				sV.Enable.Geyser = newValue
 			end,
 		},
 		{
