@@ -30,7 +30,7 @@ function HowToSunspire.CreateSettingsWindow()
 		Atro = false,
 		Wipe = false,
 		Storm = false,
-		Geyser = true,
+		Geyser = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
