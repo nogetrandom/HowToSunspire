@@ -227,7 +227,7 @@ function HowToSunspire.IceTombTimerUI()
 end
 
 local iceState = false
-function HowToSunspire.IceTombFinished(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+function HowToSunspire.IceTombFinished(_, result, _, _, unitTag, _, _, _, _, _, _, _, _, unitName, _, abilityId, _)
     if result == EFFECT_RESULT_GAINED then
         iceState = true
     elseif result == EFFECT_RESULT_FADED and iceState == true then
