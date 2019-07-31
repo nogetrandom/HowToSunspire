@@ -341,6 +341,23 @@ function HowToSunspire.CreateSettingsWindow()
 				sV.Enable.Storm = newValue
 			end,
 		},
+		{	type = "checkbox",
+			name = "Enable Datas Sending",
+			tooltip = "To enable or not the datas sending by map pings, so downstairs people can know when Fire Storm is coming.",
+			default = false,
+			getFunc = function() return sV.Enable.Sending end,
+			setFunc = function(newValue)
+				sV.Enable.Sending = newValue
+			end,
+			warning = "|cff0000Note:|r Only one person upstair sending datas is enough, so only one should enable this setting.\nMake sure to have someone enabling it tho.",
+			disabled = function()
+				if LibGPS2 and LibMapPing then
+					return false --not disabled
+				else
+					return true --disabled
+				end
+			end,
+		},
 		{
 			type = "header",
 			name = "Downstair Notifications",

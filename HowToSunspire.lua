@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.1.1"
+HowToSunspire.version = "1.1.2"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -61,6 +61,8 @@ HowToSunspire.Default = {
         Wipe = true,
         Storm = true,
         Geyser = true,
+
+        Sending = false,
     },
     FontSize = 40,
     wipeCallLater = 90,
@@ -634,7 +636,7 @@ function HowToSunspire.FireStorm(_, result, _, _, _, _, _, _, _, targetType, hit
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
     end
 
-    if canSend and LibGPS2 and LibMapPing then
+    if canSend and LibGPS2 and LibMapPing and sV.Enable.Sending then
         canSend = false
 
         local LGPS = LibGPS2
