@@ -303,7 +303,7 @@ function HowToSunspire.LavaGeyser(_, result, _, _, _, _, _, _, targetName, targe
         elseif HowToSunspire.groupMembers[targetName] then 
             --copied from CCA
             local x1, y1 = GetMapPlayerPosition("player")
-            local x2, y2 = GetMapPlayerPosition(HowToSunspire.groupMembers[targetName].unitTag)
+            local x2, y2 = GetMapPlayerPosition(HowToSunspire.groupMembers[targetName])
             if (math.sqrt((x1 - x2)^2 + (y1 - y2)^2) * 1000) < 2.8 then
                 Hts_Geyser:SetHidden(false)
                 PlaySound(SOUNDS.DUEL_START)
@@ -771,8 +771,10 @@ function HowToSunspire.GetGroupTags()
     HowToSunspire.groupMembers = {}
     if groupSize ~= 0 then
         for i = 1, groupSize do 
-            HowToSunspire.groupMembers[GetUnitName("group" .. i)].displayName = GetUnitDisplayName("group" .. i)  
-            HowToSunspire.groupMembers[GetUnitName("group" .. i)].unitTag = "group" .. i
+            --if GetUnitName("group" .. i) and GetUnitDisplayName("group" .. i) then
+            --    HowToSunspire.groupMembers[GetUnitName("group" .. i)].displayName = GetUnitDisplayName("group" .. i)
+                HowToSunspire.groupMembers[GetUnitName("group" .. i)] = "group" .. i
+            --end
         end
     end
 end
