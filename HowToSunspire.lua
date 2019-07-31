@@ -292,7 +292,7 @@ function HowToSunspire.HideAtro()
     Hts_Atro:SetHidden(true)
 end
 
-function HowToSunspire.LavaGeyser(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, _, abilityId)
+function HowToSunspire.LavaGeyser(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetId, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.Geyser == true then
         if targetType == COMBAT_UNIT_TYPE_PLAYER then
             Hts_Geyser:SetHidden(false)
@@ -300,10 +300,10 @@ function HowToSunspire.LavaGeyser(_, result, _, _, _, _, _, _, targetName, targe
 
             EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideGeyser")
             EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideGeyser", 2500, HowToSunspire.HideGeyser)
-        elseif HowToSunspire.groupMembers[targetName] then 
+        elseif HowToSunspire.groupMembers[targetId].tag then 
             --copied from CCA
             local x1, y1 = GetMapPlayerPosition("player")
-            local x2, y2 = GetMapPlayerPosition(HowToSunspire.groupMembers[targetName])
+            local x2, y2 = GetMapPlayerPosition(HowToSunspire.groupMembers[targetId].tag)
             if (math.sqrt((x1 - x2)^2 + (y1 - y2)^2) * 1000) < 2.8 then
                 Hts_Geyser:SetHidden(false)
                 PlaySound(SOUNDS.DUEL_START)
@@ -765,25 +765,20 @@ function HowToSunspire.ResetAll()
     firstStormTrigger = true
 end
 
-function HowToSunspire.GetGroupTags()
-    local groupSize = GetGroupSize()
-
-    HowToSunspire.groupMembers = {}
-    if groupSize ~= 0 then
-        for i = 1, groupSize do 
-            --if GetUnitName("group" .. i) and GetUnitDisplayName("group" .. i) then
-            --    HowToSunspire.groupMembers[GetUnitName("group" .. i)].displayName = GetUnitDisplayName("group" .. i)
-                HowToSunspire.groupMembers[GetUnitName("group" .. i)] = "group" .. i
-            --end
-        end
-    end
+function HowToSunspire.GetGroupTags(_, _, _, _, unitTag, _, _, _, _, _, _, _, _, unitName, unitId, _, _)
+    if not HowToSunspire.groupMembers[unitId] and string.sub(unitTag, 1, 5) == "group" then
+		HowToSunspire.groupMembers[unitId] = {
+			tag = unitTag,
+			name = GetUnitDisplayName(unitTag) or unitName,
+		}
+	end
 end
 
 function HowToSunspire.CombatEnded()
     zo_callLater(function() 
         if (not IsUnitInCombat("player")) then 
             HowToSunspire.ResetAll()
-        end 
+        end
     end, 3000)
 end
 
@@ -795,15 +790,13 @@ function HowToSunspire.OnPlayerActivated()
             EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, k)
         end
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE, HowToSunspire.CombatEnded)
-
-        HowToSunspire.GetGroupTags()
-        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "GroupTags", EVENT_GROUP_UPDATE, HowToSunspire.GetGroupTags)
+        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "GroupTags", EVENT_EFFECT_CHANGED, HowToSunspire.GetGroupTags)
     else
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Unregister for all abilities
             EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT)
         end
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE)
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "GroupTags", EVENT_GROUP_UPDATE)
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "GroupTags", EVENT_EFFECT_CHANGED)
     end
 
 end
