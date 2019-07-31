@@ -205,9 +205,9 @@ function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitVa
         end, 4000)
 
         --events for both ice took
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
-        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT, HowToSunspire.IceTombFinished)
-        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 119638)
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
+        EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED, HowToSunspire.IceTombFinished)
+        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID, 119638)
     end
 end
 
@@ -221,7 +221,7 @@ function HowToSunspire.IceTombTimerUI()
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffremain: |r" .. tostring(string.format("%.0f", timer)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
         Hts_Ice:SetHidden(true)
     end
 end
@@ -234,7 +234,7 @@ function HowToSunspire.IceTombFinished(_, result, _, _, _, _, _, _, _, targetTyp
         iceState = false
 
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
+        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
         Hts_Ice:SetHidden(true)
     end
 end
@@ -720,7 +720,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
-    EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_COMBAT_EVENT)
+    EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideAtro")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideGeyser")
