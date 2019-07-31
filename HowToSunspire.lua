@@ -766,7 +766,7 @@ function HowToSunspire.ResetAll()
 end
 
 function HowToSunspire.GetGroupTags(_, _, _, _, unitTag, _, _, _, _, _, _, _, _, unitName, unitId, _, _)
-    if not HowToSunspire.groupMembers[unitId] and string.sub(unitTag, 1, 5) == "group" then
+    if not HowToSunspire.groupMembers[unitId] then
 		HowToSunspire.groupMembers[unitId] = {
 			tag = unitTag,
 			name = GetUnitDisplayName(unitTag) or unitName,
@@ -791,6 +791,7 @@ function HowToSunspire.OnPlayerActivated()
         end
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "CombatEnded", EVENT_PLAYER_COMBAT_STATE, HowToSunspire.CombatEnded)
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "GroupTags", EVENT_EFFECT_CHANGED, HowToSunspire.GetGroupTags)
+        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "GroupTags", EVENT_EFFECT_CHANGED, REGISTER_FILTER_UNIT_TAG_PREFIX, "group")
     else
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Unregister for all abilities
             EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT)
