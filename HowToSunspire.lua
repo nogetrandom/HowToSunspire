@@ -11,6 +11,7 @@ local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
 
 local sV
+HowToSunspire.groupMembers = {}
 ---------------------------
 ---- Variables Default ----
 ---------------------------
