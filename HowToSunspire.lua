@@ -303,6 +303,7 @@ function HowToSunspire.LavaGeyser(_, result, _, _, _, _, _, _, targetName, targe
             EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideGeyser", 2500, HowToSunspire.HideGeyser)
         elseif HowToSunspire.groupMembers[targetId].tag then 
             --copied from CCA
+		SetMapToPlayerLocation()
             local x1, y1 = GetMapPlayerPosition("player")
             local x2, y2 = GetMapPlayerPosition(HowToSunspire.groupMembers[targetId].tag)
             if (math.sqrt((x1 - x2)^2 + (y1 - y2)^2) * 1000) < 2.8 then
