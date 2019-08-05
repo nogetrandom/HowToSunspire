@@ -693,6 +693,10 @@ function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
 
             EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
             EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
+
+            x = math.floor(x / WROTHGAR_MAP_STEP_SIZE)
+            y = math.floor(y / WROTHGAR_MAP_STEP_SIZE)
+            d("X= " .. x .. " Y= " .. y)
             --end
         end
         LGPS:PopCurrentMap()
