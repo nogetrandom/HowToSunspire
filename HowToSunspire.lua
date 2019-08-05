@@ -681,23 +681,21 @@ function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
         if LMP:IsPositionOnMap(x, y) then
             --d("Enter in Received Function")
             canSend = false
-
-            --if x == 42 * WROTHGAR_MAP_STEP_SIZE and y == 42 * WROTHGAR_MAP_STEP_SIZE then
-            canReceive = false
-            LibMapPing:UnregisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
-
-            stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
-
-            HowToSunspire.FireStormUI()
-            Hts_Storm:SetHidden(false)
-
-            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
-            EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
-
             x = math.floor(x / WROTHGAR_MAP_STEP_SIZE)
             y = math.floor(y / WROTHGAR_MAP_STEP_SIZE)
             d("X= " .. x .. " Y= " .. y)
-            --end
+            if x == 42 and y == 42 then
+                canReceive = false
+                LibMapPing:UnregisterCallback("BeforePingAdded", HowToSunspire.OnMapPing)
+
+                stormTime = GetGameTimeMilliseconds() / 1000 + 13.7
+
+                HowToSunspire.FireStormUI()
+                Hts_Storm:SetHidden(false)
+
+                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
+                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "FireStormTimer", 100, HowToSunspire.FireStormUI)
+            end
         end
         LGPS:PopCurrentMap()
     end
