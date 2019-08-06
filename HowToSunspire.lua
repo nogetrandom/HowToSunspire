@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.1.2"
+HowToSunspire.version = "1.1.1"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -121,13 +121,23 @@ end
 
 function HowToSunspire.Block(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.Block == true then
-        zo_callLater(function ()
-            Hts_Block:SetHidden(false)
-            PlaySound(SOUNDS.DUEL_START)
-            
-            EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
-            EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideBlock", 2500, HowToSunspire.HideBlock)
-        end, hitValue)
+        if hitValue > 400 then
+            zo_callLater(function ()
+                Hts_Block:SetHidden(false)
+                PlaySound(SOUNDS.DUEL_START)
+                
+                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
+                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideBlock", 2500, HowToSunspire.HideBlock)
+            end, hitValue - 400)
+        else
+            zo_callLater(function ()
+                Hts_Block:SetHidden(false)
+                PlaySound(SOUNDS.DUEL_START)
+                
+                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
+                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideBlock", 2500, HowToSunspire.HideBlock)
+            end, hitValue)
+        end
     end
 end
 
@@ -461,7 +471,7 @@ function HowToSunspire.Portal(_, result, _, _, _, _, _, _, _, targetType, hitVal
     end
 
     if sV.Enable.Wipe then
-        wipeTime = GetGameTimeMilliseconds() / 1000 + 93
+        wipeTime = GetGameTimeMilliseconds() / 1000 + 98
 
         local callLater = (93 - sV.wipeCallLater) * 1000
         zo_callLater(function()
@@ -746,24 +756,24 @@ function HowToSunspire.ResetAll()
 
     --reset variables
     listHA = {}
-    cometTime = nil
+    cometTime = 0
     iceNumber = 0
     prevIce = 0
-    iceTime = nil
-    isComet = nil
+    iceTime = 0
+    isComet = 0
     iceState = false
-    laserTime = nil
-    rightToLeft = nil
+    laserTime = 0
+    rightToLeft = 0
     flash = 0
-    spitTime = nil
-    thrashTime = nil
-    portalTime = nil
-    wipeTime = nil
+    spitTime = 0
+    thrashTime = 0
+    portalTime = 0
+    wipeTime = 0
     cptDownstair = 0
-    interruptTime = nil
-    interruptUnitId = nil
-    pinsTime = nil
-    stormTime = nil
+    interruptTime = 0
+    interruptUnitId = 0
+    pinsTime = 0
+    stormTime = 0
     canReceive = false
     canSend = false
     firstStormTrigger = true
