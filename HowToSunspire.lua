@@ -341,6 +341,8 @@ end
 
 local nextFlareTime = 0
 function HowToSunspire.NextFlare(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetId, abilityId)
+    if not sV.Enable.NextFlare then return end
+
     if abilityId == 121722 and result == ACTION_RESULT_BEGIN then
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 32
     elseif abilityId == 121459 and result == ACTION_RESULT_EFFECT_FADED then
@@ -493,6 +495,8 @@ end
 
 local nextMeteorTime = 0
 function HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if not sV.Enable.NextMeteor then return end
+
     if (abilityId == 117251 or abilityId == 123067) and result == ACTION_RESULT_EFFECT_GAINED_DURATION then
         nextMeteorTime = GetGameTimeMilliseconds() / 1000 + 14.5
     elseif abilityId == 117308 and result == ACTION_RESULT_BEGIN then
@@ -507,7 +511,7 @@ function HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hi
     EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "NextMeteorTimer", 1000, HowToSunspire.NextMeteorUI)
 end
 
-function HowToSunspire.NextFlareUI()
+function HowToSunspire.NextMeteorUI()
     local currentTime = GetGameTimeMilliseconds() / 1000
     local timer = nextMeteorTime - currentTime
 
