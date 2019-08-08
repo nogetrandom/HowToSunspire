@@ -152,7 +152,7 @@ function HowToSunspire.HideBlock()
     Hts_Block:SetHidden(true)
 end
 
-local cometTime = 0
+local cometTime
 local isComet = true
 function HowToSunspire.Comet(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if sV.Enable.Comet ~= true or hitValue < 100 or targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
@@ -196,7 +196,7 @@ end
 --------------------
 local iceNumber = 0
 local prevIce = 0
-local iceTime = 0
+local iceTime
 function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.IceTomb == true then
         local currentTime = GetGameTimeMilliseconds()
@@ -257,7 +257,7 @@ function HowToSunspire.IceTombFinished(_, result, _, _, unitTag, _, _, _, _, _, 
     end
 end
 
-local laserTime = 0
+local laserTime
 function HowToSunspire.LokkeLaser(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.LaserLokke == true then
         local currentTime = GetGameTimeMilliseconds()
@@ -339,7 +339,7 @@ function HowToSunspire.HideGeyser()
     Hts_Geyser:SetHidden(true)
 end
 
-local nextFlareTime = 0
+local nextFlareTime
 function HowToSunspire.NextFlare(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetId, abilityId)
     if not sV.Enable.NextFlare then return end
 
@@ -377,7 +377,7 @@ end
 ---------------------
 ---- NAHVIINTAAS ----
 ---------------------
-local rightToLeft = 0
+local rightToLeft
 function HowToSunspire.SweepingBreath(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.SweepBreath == true then
         if abilityId == 118743 then
@@ -437,7 +437,7 @@ function HowToSunspire.HideSweepingBreath()
     Hts_Sweep:SetHidden(true)
 end
 
-local spitTime = 0
+local spitTime
 function HowToSunspire.FireSpit(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if targetType ~= COMBAT_UNIT_TYPE_PLAYER or hitValue < 300 or sV.Enable.Spit ~= true then return end
 
@@ -465,7 +465,8 @@ function HowToSunspire.FireSpitUI()
     end
 end
 
-local thrashTime = 0
+local thrashTime
+local nextMeteorTime
 function HowToSunspire.Thrash(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.Thrash == true then
         local currentTime = GetGameTimeMilliseconds()
@@ -493,7 +494,6 @@ function HowToSunspire.ThrashTimerUI()
     end
 end
 
-local nextMeteorTime = 0
 function HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if not sV.Enable.NextMeteor then return end
 
@@ -533,8 +533,8 @@ end
 ------------------------
 ---- LAST DOWNSTAIR ----
 ------------------------
-local portalTime = 0
-local wipeTime = 0
+local portalTime
+local wipeTime
 local canSend = false
 local canReceive = false
 function HowToSunspire.Portal(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
@@ -633,7 +633,7 @@ function HowToSunspire.IsUpstair(_, result, _, _, _, _, _, _, _, targetType, hit
     end
 end
 
-local interruptTime = 0
+local interruptTime
 local interruptUnitId
 function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if result ~= ACTION_RESULT_EFFECT_GAINED_DURATION --[[or downstair ~= true]] then return end
@@ -675,7 +675,7 @@ function HowToSunspire.InterruptTimerUI()
     end
 end
 
-local pinsTime = 0
+local pinsTime
 function HowToSunspire.PinsDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     --stop the timer of interrupt
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
@@ -709,7 +709,7 @@ end
 ---- SHARE PART FOR EXPLOSION ----
 ----------------------------------
 -- see https://i.ytimg.com/vi/O4tbOvKwZUw/maxresdefault.jpg
-local stormTime = 0
+local stormTime
 local firstStormTrigger = true
 function HowToSunspire.FireStorm(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if result ~= ACTION_RESULT_BEGIN then return end
