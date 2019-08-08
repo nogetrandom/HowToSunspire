@@ -344,8 +344,10 @@ function HowToSunspire.NextFlare(_, result, _, _, _, _, _, _, targetName, target
     if not sV.Enable.NextFlare then return end
 
     if abilityId == 121722 and result == ACTION_RESULT_BEGIN then
+        d("Flare")
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 32
     elseif abilityId == 121459 and result == ACTION_RESULT_EFFECT_FADED then
+        d("Fly")
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 30
     elseif abilityId == nil and result == nil and targetName == nil and targetType == nil and hitValue == nil and targetId == nil then 
         --from fight begin
@@ -366,7 +368,7 @@ function HowToSunspire.NextFlareUI()
     local timer = nextFlareTime - currentTime
 
     if timer >= 0 then
-        Hts_NextFlare_Label:SetText("|ce51919Next Flare: |r" .. tostring(string.format("%.0f", timer / 1000)))
+        Hts_NextFlare_Label:SetText("|ce51919Next Flare: |r" .. tostring(string.format("%.0f", timer)))
     else
         Hts_NextFlare_Label:SetText("|ce51919Next Flare: |rINC")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "NextFlareTimer")
@@ -516,7 +518,7 @@ function HowToSunspire.NextMeteorUI()
     local timer = nextMeteorTime - currentTime
 
     if timer >= 0 then
-        Hts_NextMeteor_Label:SetText("|cf51414Next Meteor: |r" .. tostring(string.format("%.0f", timer / 1000)))
+        Hts_NextMeteor_Label:SetText("|cf51414Next Meteor: |r" .. tostring(string.format("%.0f", timer)))
     else
         Hts_NextMeteor_Label:SetText("|cf51414Next Meteor: |rINC")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "NextMeteorTimer")
