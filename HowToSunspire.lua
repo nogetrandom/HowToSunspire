@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.1.3"
+HowToSunspire.version = "1.2"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -344,10 +344,8 @@ function HowToSunspire.NextFlare(_, result, _, _, _, _, _, _, targetName, target
     if not sV.Enable.NextFlare then return end
 
     if abilityId == 121722 and result == ACTION_RESULT_BEGIN then
-        d("Flare")
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 32
-    elseif abilityId == 121459 and result == ACTION_RESULT_EFFECT_FADED then
-        d("Fly")
+    elseif abilityId == 121459 and result == ACTION_RESULT_EFFECT_FADED then   
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 30
     elseif abilityId == nil and result == nil and targetName == nil and targetType == nil and hitValue == nil and targetId == nil then 
         --from fight begin
@@ -814,6 +812,10 @@ function HowToSunspire.ResetAll()
     Hts_Geyser:SetHidden(true)
     Hts_NextFlare:SetHidden(true)
     Hts_NextMeteor:SetHidden(true)
+    zo_callLater(function()
+        Hts_NextFlare:SetHidden(true)
+        Hts_NextMeteor:SetHidden(true)
+    end, 3000)
 
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
