@@ -32,6 +32,7 @@ function HowToSunspire.CreateSettingsWindow()
 		Storm = false,
 		Geyser = false,
 		NextFlare = false,
+		NextMeteor = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -67,6 +68,7 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_Storm:SetHidden(not newValue)
 						Hts_Geyser:SetHidden(not newValue)
 						Hts_NextFlare:SetHidden(not newValue)
+						Hts_NextMeteor:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -180,7 +182,7 @@ function HowToSunspire.CreateSettingsWindow()
 					end,
 				},
 				{	type = "checkbox",
-					name = "Unlock Flame Storm",
+					name = "Unlock Fire Storm",
 					tooltip = "Use it to set the position of the Fire Storm.",
 					default = false,
 					getFunc = function() return Unlock.Storm end,
@@ -197,6 +199,16 @@ function HowToSunspire.CreateSettingsWindow()
 					setFunc = function(newValue)
 						Unlock.Wipe = newValue
 						Hts_Wipe:SetHidden(not newValue)
+					end,
+				},
+				{	type = "checkbox",
+					name = "Unlock Next Meteor",
+					tooltip = "Use it to set the position of the Next Meteor timer.",
+					default = false,
+					getFunc = function() return Unlock.NextMeteor end,
+					setFunc = function(newValue)
+						Unlock.NextMeteor = newValue
+						Hts_NextMeteor:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -231,6 +243,7 @@ function HowToSunspire.CreateSettingsWindow()
 				HowToSunspire.SetFontSize(Hts_Storm_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_Geyser_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_NextFlare_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_NextMeteor_Label, newValue)
 			end,
             min = 32,
             max = 56,
@@ -355,6 +368,18 @@ function HowToSunspire.CreateSettingsWindow()
 			setFunc = function(newValue)
 				sV.Enable.Spit = newValue
 			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Next Meteor",
+			tooltip = "Will show you a timer that tell you in how many time the next Meteor will be casted.",
+			default = true,
+			getFunc = function() return sV.Enable.NextMeteor end,
+			setFunc = function(newValue)
+				sV.Enable.NextMeteor = newValue
+			end,
+		},
+		{	type = "description",
+			text = " ",
 		},
 		{	type = "checkbox",
 			name = "Enable Fire Strom",

@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.1.2"
+HowToSunspire.version = "1.1.3"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -31,6 +31,7 @@ HowToSunspire.Default = {
         Storm = 0,
         Geyser = 0,
         NextFlare = 0,
+        NextMeteor = 0,
     },
     OffsetY = {
         HA = 0,
@@ -47,6 +48,7 @@ HowToSunspire.Default = {
         Storm = -100,
         Geyser = 50,
         NextFlare = -100,
+        NextMeteor = 150,
     },
     Enable = {
         HA = true,
@@ -65,6 +67,7 @@ HowToSunspire.Default = {
         Storm = true,
         Geyser = true,
         NextFlare = true,
+        NextMeteor = true,
 
         Sending = false,
     },
@@ -159,6 +162,7 @@ function HowToSunspire.Comet(_, result, _, _, _, _, _, _, _, targetType, hitValu
     cometTime = GetGameTimeMilliseconds() + hitValue
     if abilityId == 117251 or abilityId == 123067 then
         isComet = false
+        HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     else
         isComet = true
     end
@@ -470,6 +474,8 @@ function HowToSunspire.Thrash(_, result, _, _, _, _, _, _, _, targetType, hitVal
 
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ThrashTimer")
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "ThrashTimer", 100, HowToSunspire.ThrashTimerUI)
+
+        nextMeteorTime = nextMeteorTime - 1.5
     end
 end
 
@@ -482,6 +488,41 @@ function HowToSunspire.ThrashTimerUI()
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ThrashTimer")
         Hts_Thrash:SetHidden(true)
+    end
+end
+
+local nextMeteorTime = 0
+function HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if (abilityId == 117251 or abilityId == 123067) and result == ACTION_RESULT_EFFECT_GAINED_DURATION then
+        nextMeteorTime = GetGameTimeMilliseconds() / 1000 + 14.5
+    elseif abilityId == 117308 and result == ACTION_RESULT_BEGIN then
+        nextMeteorTime = GetGameTimeMilliseconds() / 1000 + 10.5
+    else
+        return
+    end
+    HowToSunspire.NextMeteorUI()
+    Hts_NextMeteor:SetHidden(false)
+
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "NextMeteorTimer")
+    EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "NextMeteorTimer", 1000, HowToSunspire.NextMeteorUI)
+end
+
+function HowToSunspire.NextFlareUI()
+    local currentTime = GetGameTimeMilliseconds() / 1000
+    local timer = nextMeteorTime - currentTime
+
+    if timer >= 0 then
+        Hts_NextMeteor_Label:SetText("|cf51414Next Meteor: |r" .. tostring(string.format("%.0f", timer / 1000)))
+    else
+        Hts_NextMeteor_Label:SetText("|cf51414Next Meteor: |rINC")
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "NextMeteorTimer")
+        --Hts_NextMeteor:SetHidden(true)
+    end
+end
+
+function HowToSunspire.MarkForDeath(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN then
+        nextMeteorTime = nextMeteorTime + 1.5
     end
 end
 
@@ -766,6 +807,7 @@ function HowToSunspire.ResetAll()
     Hts_Storm:SetHidden(true)
     Hts_Geyser:SetHidden(true)
     Hts_NextFlare:SetHidden(true)
+    Hts_NextMeteor:SetHidden(true)
 
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
@@ -781,6 +823,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireSpitTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ThrashTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "NextMeteorTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PortalTimer")
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "WipeFinished", EVENT_COMBAT_EVENT)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "WipeTimer")
@@ -808,6 +851,7 @@ function HowToSunspire.ResetAll()
     spitTime = 0
     nextFlareTime = 0
     thrashTime = 0
+    nextMeteorTime = 0
     portalTime = 0
     wipeTime = 0
     cptDownstair = 0

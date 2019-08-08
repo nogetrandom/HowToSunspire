@@ -33,6 +33,8 @@ HowToSunspire.AbilitiesToTrack = {
     [115592] = HowToSunspire.FireSpit, --same but during nahvin fight
     [118562] = HowToSunspire.Thrash, -- thrash of nahvin
     [118884] = HowToSunspire.FireStorm, --room explosion of nahvin
+    [117308] = HowToSunspire.NextMeteor, --entering phase 4
+    [117938] = HowToSunspire.MarkForDeath, --cast debuff on tank
 
     [121676] = HowToSunspire.Portal, --Portal on last boss
     [121213] = HowToSunspire.IsDownstair, --Portal used

@@ -20,6 +20,7 @@ function HowToSunspire.InitUI()
     Hts_Storm:SetHidden(true)
     Hts_Geyser:SetHidden(true)
     Hts_NextFlare:SetHidden(true)
+    Hts_NextMeteor:SetHidden(true)
     Hts_Ha:ClearAnchors()
     Hts_Down:ClearAnchors()
     Hts_Ice:ClearAnchors()
@@ -34,6 +35,7 @@ function HowToSunspire.InitUI()
     Hts_Storm:ClearAnchors()
     Hts_Geyser:ClearAnchors()
     Hts_NextFlare:ClearAnchors()
+    Hts_NextMeteor:ClearAnchors()
 
     --heavy attacks
     if sV.OffsetX.HA ~= HowToSunspire.Default.OffsetX.HA and sV.OffsetY.HA ~= HowToSunspire.Default.OffsetY.HA then 
@@ -134,6 +136,12 @@ function HowToSunspire.InitUI()
       Hts_NextFlare:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.NextFlare, sV.OffsetY.NextFlare)
     end
 
+    if sV.OffsetX.NextMeteor ~= HowToSunspire.Default.OffsetX.NextMeteor and sV.OffsetY.NextMeteor ~= HowToSunspire.Default.OffsetY.NextMeteor then 
+      Hts_NextMeteor:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, sV.OffsetX.NextMeteor, sV.OffsetY.NextMeteor)
+    else 
+      Hts_NextMeteor:SetAnchor(CENTER, GuiRoot, CENTER, sV.OffsetX.NextMeteor, sV.OffsetY.NextMeteor)
+    end
+
     HowToSunspire.SetFontSize(Hts_Ha_Label, sV.FontSize)
     HowToSunspire.SetFontSize(Hts_Down_Label, sV.FontSize)
     HowToSunspire.SetFontSize(Hts_Ice_Label, sV.FontSize)
@@ -148,6 +156,7 @@ function HowToSunspire.InitUI()
     HowToSunspire.SetFontSize(Hts_Storm_Label, sV.FontSize)
     HowToSunspire.SetFontSize(Hts_Geyser_Label, sV.FontSize)
     HowToSunspire.SetFontSize(Hts_NextFlare_Label, sV.FontSize)
+    HowToSunspire.SetFontSize(Hts_NextMeteor_Label, sV.FontSize)
 end
 
 function HowToSunspire.SetFontSize(label, size)
@@ -224,4 +233,9 @@ end
 function HowToSunspire.SaveLoc_NextFlare()
 	sV.OffsetX.NextFlare = Hts_NextFlare:GetLeft()
 	sV.OffsetY.NextFlare = Hts_NextFlare:GetTop()
+end
+
+function HowToSunspire.SaveLoc_NextMeteor()
+	sV.OffsetX.NextMeteor = Hts_NextMeteor:GetLeft()
+	sV.OffsetY.NextMeteor = Hts_NextMeteor:GetTop()
 end
