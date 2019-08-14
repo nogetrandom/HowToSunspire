@@ -1,6 +1,6 @@
 
 ## Title: HowTo|c989898Sunspire|r
-## APIVersion: 100027
+## APIVersion: 100028
 ## Author: Floliroy
 ## Version: 1.2.1
 ## DependsOn: LibAddonMenu-2.0
