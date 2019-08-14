@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.2"
+HowToSunspire.version = "1.2.1"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -904,6 +904,8 @@ function HowToSunspire.OnPlayerActivated()
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "CombatState", EVENT_PLAYER_COMBAT_STATE, HowToSunspire.CombatState)
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "GroupTags", EVENT_EFFECT_CHANGED, HowToSunspire.GetGroupTags)
         EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "GroupTags", EVENT_EFFECT_CHANGED, REGISTER_FILTER_UNIT_TAG_PREFIX, "group")
+
+        HowToSunspire.ResetAll()
     else
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Unregister for all abilities
             EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT)
