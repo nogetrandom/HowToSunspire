@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.1.3"
+HowToSunspire.version = "1.2.1"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -32,6 +32,7 @@ HowToSunspire.Default = {
         Geyser = 0,
         NextFlare = 0,
         NextMeteor = 0,
+        Cata = 0,
     },
     OffsetY = {
         HA = 0,
@@ -49,6 +50,7 @@ HowToSunspire.Default = {
         Geyser = 50,
         NextFlare = -100,
         NextMeteor = 150,
+        Cata = -100,
     },
     Enable = {
         HA = true,
@@ -68,6 +70,7 @@ HowToSunspire.Default = {
         Geyser = true,
         NextFlare = true,
         NextMeteor = true,
+        Cata = true,
 
         Sending = false,
     },
@@ -152,7 +155,7 @@ function HowToSunspire.HideBlock()
     Hts_Block:SetHidden(true)
 end
 
-local cometTime = 0
+local cometTime
 local isComet = true
 function HowToSunspire.Comet(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if sV.Enable.Comet ~= true or hitValue < 100 or targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
@@ -196,7 +199,7 @@ end
 --------------------
 local iceNumber = 0
 local prevIce = 0
-local iceTime = 0
+local iceTime
 function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.IceTomb == true then
         local currentTime = GetGameTimeMilliseconds()
@@ -257,7 +260,7 @@ function HowToSunspire.IceTombFinished(_, result, _, _, unitTag, _, _, _, _, _, 
     end
 end
 
-local laserTime = 0
+local laserTime
 function HowToSunspire.LokkeLaser(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.LaserLokke == true then
         local currentTime = GetGameTimeMilliseconds()
@@ -339,8 +342,10 @@ function HowToSunspire.HideGeyser()
     Hts_Geyser:SetHidden(true)
 end
 
-local nextFlareTime = 0
+local nextFlareTime
 function HowToSunspire.NextFlare(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetId, abilityId)
+    if not sV.Enable.NextFlare then return end
+
     if abilityId == 121722 and result == ACTION_RESULT_BEGIN then
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 32
     elseif abilityId == 121459 and result == ACTION_RESULT_EFFECT_FADED then
@@ -364,7 +369,7 @@ function HowToSunspire.NextFlareUI()
     local timer = nextFlareTime - currentTime
 
     if timer >= 0 then
-        Hts_NextFlare_Label:SetText("|ce51919Next Flare: |r" .. tostring(string.format("%.0f", timer / 1000)))
+        Hts_NextFlare_Label:SetText("|ce51919Next Flare: |r" .. tostring(string.format("%.0f", timer)))
     else
         Hts_NextFlare_Label:SetText("|ce51919Next Flare: |rINC")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "NextFlareTimer")
@@ -372,10 +377,36 @@ function HowToSunspire.NextFlareUI()
     end
 end
 
+local cataTime
+function HowToSunspire.Cata(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.Cata == true then
+        local currentTime = GetGameTimeMilliseconds()
+        cataTime = currentTime + hitValue
+
+        HowToSunspire.CataTimerUI()
+        Hts_Cata:SetHidden(false)
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CataTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "CataTimer", 100, HowToSunspire.CataTimerUI)
+    end
+end
+
+function HowToSunspire.CataTimerUI()
+    local currentTime = GetGameTimeMilliseconds()
+    local timer = cataTime - currentTime
+
+    if timer >= 0 then
+        Hts_Cata_Label:SetText("|ce51919Cataclysm Ends in: |r" .. tostring(string.format("%.1f", timer / 1000)))
+    else
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CataTimer")
+        Hts_Cata:SetHidden(true)
+    end
+end
+
 ---------------------
 ---- NAHVIINTAAS ----
 ---------------------
-local rightToLeft = 0
+local rightToLeft
 function HowToSunspire.SweepingBreath(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.SweepBreath == true then
         if abilityId == 118743 then
@@ -435,7 +466,7 @@ function HowToSunspire.HideSweepingBreath()
     Hts_Sweep:SetHidden(true)
 end
 
-local spitTime = 0
+local spitTime
 function HowToSunspire.FireSpit(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if targetType ~= COMBAT_UNIT_TYPE_PLAYER or hitValue < 300 or sV.Enable.Spit ~= true then return end
 
@@ -463,7 +494,8 @@ function HowToSunspire.FireSpitUI()
     end
 end
 
-local thrashTime = 0
+local thrashTime
+local nextMeteorTime
 function HowToSunspire.Thrash(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     if result == ACTION_RESULT_BEGIN and sV.Enable.Thrash == true then
         local currentTime = GetGameTimeMilliseconds()
@@ -491,8 +523,9 @@ function HowToSunspire.ThrashTimerUI()
     end
 end
 
-local nextMeteorTime = 0
 function HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if not sV.Enable.NextMeteor then return end
+
     if (abilityId == 117251 or abilityId == 123067) and result == ACTION_RESULT_EFFECT_GAINED_DURATION then
         nextMeteorTime = GetGameTimeMilliseconds() / 1000 + 14.5
     elseif abilityId == 117308 and result == ACTION_RESULT_BEGIN then
@@ -507,12 +540,12 @@ function HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hi
     EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "NextMeteorTimer", 1000, HowToSunspire.NextMeteorUI)
 end
 
-function HowToSunspire.NextFlareUI()
+function HowToSunspire.NextMeteorUI()
     local currentTime = GetGameTimeMilliseconds() / 1000
     local timer = nextMeteorTime - currentTime
 
     if timer >= 0 then
-        Hts_NextMeteor_Label:SetText("|cf51414Next Meteor: |r" .. tostring(string.format("%.0f", timer / 1000)))
+        Hts_NextMeteor_Label:SetText("|cf51414Next Meteor: |r" .. tostring(string.format("%.0f", timer)))
     else
         Hts_NextMeteor_Label:SetText("|cf51414Next Meteor: |rINC")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "NextMeteorTimer")
@@ -529,8 +562,8 @@ end
 ------------------------
 ---- LAST DOWNSTAIR ----
 ------------------------
-local portalTime = 0
-local wipeTime = 0
+local portalTime
+local wipeTime
 local canSend = false
 local canReceive = false
 function HowToSunspire.Portal(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
@@ -629,7 +662,7 @@ function HowToSunspire.IsUpstair(_, result, _, _, _, _, _, _, _, targetType, hit
     end
 end
 
-local interruptTime = 0
+local interruptTime
 local interruptUnitId
 function HowToSunspire.InterruptDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if result ~= ACTION_RESULT_EFFECT_GAINED_DURATION --[[or downstair ~= true]] then return end
@@ -671,7 +704,7 @@ function HowToSunspire.InterruptTimerUI()
     end
 end
 
-local pinsTime = 0
+local pinsTime
 function HowToSunspire.PinsDown(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     --stop the timer of interrupt
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
@@ -705,7 +738,7 @@ end
 ---- SHARE PART FOR EXPLOSION ----
 ----------------------------------
 -- see https://i.ytimg.com/vi/O4tbOvKwZUw/maxresdefault.jpg
-local stormTime = 0
+local stormTime
 local firstStormTrigger = true
 function HowToSunspire.FireStorm(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if result ~= ACTION_RESULT_BEGIN then return end
@@ -808,6 +841,11 @@ function HowToSunspire.ResetAll()
     Hts_Geyser:SetHidden(true)
     Hts_NextFlare:SetHidden(true)
     Hts_NextMeteor:SetHidden(true)
+    Hts_Cata:SetHidden(true)
+    zo_callLater(function()
+        Hts_NextFlare:SetHidden(true)
+        Hts_NextMeteor:SetHidden(true)
+    end, 3000)
 
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
@@ -831,6 +869,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CataTimer")
 
     --[[if LibMapPing then
         LibMapPing:RemoveMapPing(MAP_PIN_TYPE_PING)
@@ -862,6 +901,7 @@ function HowToSunspire.ResetAll()
     canReceive = false
     canSend = false
     firstStormTrigger = true
+    cataTime = 0
 end
 
 function HowToSunspire.GetGroupTags(_, _, _, _, unitTag, _, _, _, _, _, _, _, _, unitName, unitId, _, _)
@@ -896,6 +936,8 @@ function HowToSunspire.OnPlayerActivated()
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "CombatState", EVENT_PLAYER_COMBAT_STATE, HowToSunspire.CombatState)
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "GroupTags", EVENT_EFFECT_CHANGED, HowToSunspire.GetGroupTags)
         EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "GroupTags", EVENT_EFFECT_CHANGED, REGISTER_FILTER_UNIT_TAG_PREFIX, "group")
+
+        HowToSunspire.ResetAll()
     else
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Unregister for all abilities
             EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT)

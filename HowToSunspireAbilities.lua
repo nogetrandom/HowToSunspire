@@ -26,6 +26,7 @@ HowToSunspire.AbilitiesToTrack = {
     [124546] = HowToSunspire.LavaGeyser, --lava geyser from fire atro
     [121722] = HowToSunspire.NextFlare, --Focus fire casted
     [121459] = HowToSunspire.NextFlare, --boss go fly
+    [122598] = HowToSunspire.Cata, -- Cataclysm
 
     [120188] = HowToSunspire.SweepingBreath, --fire sweeping breath >>>>
     [118743] = HowToSunspire.SweepingBreath, --fire sweeping breath <<<<
