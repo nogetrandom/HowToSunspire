@@ -21,4 +21,5 @@ HowToSunspireSettings.lua
 HowToSunspire.lua
 HowToSunspireUI.lua
 HowToSunspireAbilities.lua
+
 HowToSunspire.xml
