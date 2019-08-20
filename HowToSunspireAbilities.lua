@@ -9,7 +9,10 @@ HowToSunspire.AbilitiesToTrack = {
     [121422] = HowToSunspire.HeavyAttack, --HA from cone downstair
     [117071] = HowToSunspire.HeavyAttack, --HA from 1H & Shield
 
+    [117071] = HowToSunspire.ShieldCharge, --shield cjharge from 1H & Shield
+
     [120890] = HowToSunspire.Block, --jump from the red cats
+    [122012] = HowToSunspire.Block, --jump from white cats
 
     [121075] = HowToSunspire.Comet, --comet from downstair (not on someone) 121074
     [120359] = HowToSunspire.Comet, --comet from lokkestiiz that bump 
@@ -40,4 +43,5 @@ HowToSunspire.AbilitiesToTrack = {
     [121213] = HowToSunspire.IsDownstair, --Portal used
     [121254] = HowToSunspire.IsUpstair, --return to reality
     [121436] = HowToSunspire.InterruptDown, --attack to interrupt down
+    [121411] = HowToSunspire.NegateField, --negate from downstair
 }

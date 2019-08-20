@@ -33,6 +33,7 @@ function HowToSunspire.CreateSettingsWindow()
 		Geyser = false,
 		NextFlare = false,
 		NextMeteor = false,
+		Negate = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -69,6 +70,7 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_Geyser:SetHidden(not newValue)
 						Hts_NextFlare:SetHidden(not newValue)
 						Hts_NextMeteor:SetHidden(not newValue)
+						Hts_Negate:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -221,6 +223,16 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_Down:SetHidden(not newValue)
 					end,
 				},
+				{	type = "checkbox",
+					name = "Unlock Negate Notification",
+					tooltip = "Use it to set the position of Negate notification while downstair.",
+					default = false,
+					getFunc = function() return Unlock.Negate end,
+					setFunc = function(newValue)
+						Unlock.Negate = newValue
+						Hts_Negate:SetHidden(not newValue)
+					end,
+				},
 			},
 		},
 		{	type = "slider",
@@ -244,6 +256,7 @@ function HowToSunspire.CreateSettingsWindow()
 				HowToSunspire.SetFontSize(Hts_Geyser_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_NextFlare_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_NextMeteor_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Negate_Label, newValue)
 			end,
             min = 32,
             max = 56,
@@ -461,6 +474,15 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.Pins end,
 			setFunc = function(newValue)
 				sV.Enable.Pins = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Negate Field",
+			tooltip = "Show a notification when you are targeted by the Negate Field while downstair.",
+			default = true,
+			getFunc = function() return sV.Enable.Negate end,
+			setFunc = function(newValue)
+				sV.Enable.Negate = newValue
 			end,
 		},
 	}

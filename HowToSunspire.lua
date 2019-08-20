@@ -32,6 +32,7 @@ HowToSunspire.Default = {
         Geyser = 0,
         NextFlare = 0,
         NextMeteor = 0,
+        Negate = 0,
     },
     OffsetY = {
         HA = 0,
@@ -49,6 +50,7 @@ HowToSunspire.Default = {
         Geyser = 50,
         NextFlare = -100,
         NextMeteor = 150,
+        Negate = -50,
     },
     Enable = {
         HA = true,
@@ -68,6 +70,7 @@ HowToSunspire.Default = {
         Geyser = true,
         NextFlare = true,
         NextMeteor = true,
+        Negate = true,
 
         Sending = false,
     },
@@ -155,17 +158,18 @@ end
 local cometTime
 local isComet = true
 function HowToSunspire.Comet(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
-    if sV.Enable.Comet ~= true or hitValue < 100 or targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
-    if (abilityId == 120359 and result ~= ACTION_RESULT_BEGIN) or
-    (abilityId ~= 120359 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION) then return end
-
-    cometTime = GetGameTimeMilliseconds() + hitValue
     if abilityId == 117251 or abilityId == 123067 then
         isComet = false
         HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     else
         isComet = true
     end
+
+    if sV.Enable.Comet ~= true or hitValue < 100 or targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
+    if (abilityId == 120359 and result ~= ACTION_RESULT_BEGIN) or
+    (abilityId ~= 120359 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION) then return end
+
+    cometTime = GetGameTimeMilliseconds() + hitValue
 
     HowToSunspire.CometUI()
     Hts_Comet:SetHidden(false)
@@ -473,6 +477,7 @@ function HowToSunspire.Thrash(_, result, _, _, _, _, _, _, _, targetType, hitVal
         thrashTime = currentTime + hitValue
 
         HowToSunspire.ThrashTimerUI()
+        PlaySound(SOUNDS.CHAMPION_POINTS_COMMITTED)
         Hts_Thrash:SetHidden(false)
 
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ThrashTimer")
@@ -705,6 +710,21 @@ function HowToSunspire.PinsTimerUI()
     end
 end
 
+function HowToSunspire.NegateField(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and targetType == COMBAT_UNIT_TYPE_PLAYER and sV.Enable.Negate == true then
+        Hts_Negate:SetHidden(false)
+        PlaySound(SOUNDS.DUEL_START)
+
+		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideNegate")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideNegate", 2500, HowToSunspire.HideNegate)
+    end
+end
+
+function HowToSunspire.HideNegate()
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideNegate")
+    Hts_Negate:SetHidden(true)
+end
+
 ----------------------------------
 ---- SHARE PART FOR EXPLOSION ----
 ----------------------------------
@@ -810,6 +830,7 @@ function HowToSunspire.ResetAll()
     Hts_Wipe:SetHidden(true)
     Hts_Storm:SetHidden(true)
     Hts_Geyser:SetHidden(true)
+    Hts_Negate:SetHidden(true)
     Hts_NextFlare:SetHidden(true)
     Hts_NextMeteor:SetHidden(true)
     zo_callLater(function()
@@ -838,6 +859,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideNegate")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
 
     --[[if LibMapPing then
