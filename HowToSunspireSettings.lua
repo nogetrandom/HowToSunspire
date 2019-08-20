@@ -34,6 +34,7 @@ function HowToSunspire.CreateSettingsWindow()
 		NextFlare = false,
 		NextMeteor = false,
 		Negate = false,
+		Shield = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -71,6 +72,7 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_NextFlare:SetHidden(not newValue)
 						Hts_NextMeteor:SetHidden(not newValue)
 						Hts_Negate:SetHidden(not newValue)
+						Hts_Shield:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -101,6 +103,16 @@ function HowToSunspire.CreateSettingsWindow()
 					setFunc = function(newValue)
 						Unlock.Comet = newValue
 						Hts_Comet:SetHidden(not newValue)  
+					end,
+				},
+				{	type = "checkbox",
+					name = "Unlock Shield Charge",
+					tooltip = "Use it to set the position of the Shield Charge alert.",
+					default = false,
+					getFunc = function() return Unlock.Shield end,
+					setFunc = function(newValue)
+						Unlock.Shield = newValue
+						Hts_Shield:SetHidden(not newValue)  
 					end,
 				},
 				{	type = "checkbox",
@@ -257,6 +269,7 @@ function HowToSunspire.CreateSettingsWindow()
 				HowToSunspire.SetFontSize(Hts_NextFlare_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_NextMeteor_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_Negate_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Shield_Label, newValue)
 			end,
             min = 32,
             max = 56,
@@ -296,6 +309,15 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.Comet end,
 			setFunc = function(newValue)
 				sV.Enable.Comet = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Shield Charge",
+			tooltip = "Tracks the Shield Charge from the 1H & Shield add.",
+			default = true,
+			getFunc = function() return sV.Enable.Shield end,
+			setFunc = function(newValue)
+				sV.Enable.Shield = newValue
 			end,
 		},
 		{

@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.2.1"
+HowToSunspire.version = "1.3"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -33,6 +33,7 @@ HowToSunspire.Default = {
         NextFlare = 0,
         NextMeteor = 0,
         Negate = 0,
+        Shield = 0,
     },
     OffsetY = {
         HA = 0,
@@ -51,6 +52,7 @@ HowToSunspire.Default = {
         NextFlare = -100,
         NextMeteor = 150,
         Negate = -50,
+        Shield = -50,
     },
     Enable = {
         HA = true,
@@ -71,6 +73,7 @@ HowToSunspire.Default = {
         NextFlare = true,
         NextMeteor = true,
         Negate = true,
+        Shield = true,
 
         Sending = false,
     },
@@ -171,6 +174,10 @@ function HowToSunspire.Comet(_, result, _, _, _, _, _, _, _, targetType, hitValu
 
     cometTime = GetGameTimeMilliseconds() + hitValue
 
+    if abilityId == 120359 then
+        cometTime = cometTime + 1000
+    end
+
     HowToSunspire.CometUI()
     Hts_Comet:SetHidden(false)
     PlaySound(SOUNDS.DUEL_START)
@@ -192,6 +199,32 @@ function HowToSunspire.CometUI()
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
         Hts_Comet:SetHidden(true)
+    end
+end
+
+local shieldChargeTime
+function HowToSunspire.ShieldCharge(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and targetType == COMBAT_UNIT_TYPE_PLAYER and sV.Enable.Shield == true then
+        local currentTime = GetGameTimeMilliseconds()
+        shieldChargeTime = currentTime + hitValue
+
+        HowToSunspire.ShieldChargeTimerUI()
+        Hts_Shield:SetHidden(false)
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer", 100, HowToSunspire.ShieldChargeTimerUI)
+    end
+end
+
+function HowToSunspire.ShieldChargeTimerUI()
+    local currentTime = GetGameTimeMilliseconds()
+    local timer = shieldChargeTime - currentTime
+
+    if timer >= 0 then
+        Hts_Shield_Label:SetText("|c7fffd4Shield Charge: |r" .. tostring(string.format("%.1f", timer / 1000)))
+    else
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer")
+        Hts_Shield:SetHidden(true)
     end
 end
 
@@ -446,7 +479,13 @@ function HowToSunspire.FireSpit(_, result, _, _, _, _, _, _, _, targetType, hitV
     if targetType ~= COMBAT_UNIT_TYPE_PLAYER or hitValue < 300 or sV.Enable.Spit ~= true then return end
 
 	if result == ACTION_RESULT_BEGIN then
-		spitTime = GetGameTimeMilliseconds() + hitValue
+        spitTime = GetGameTimeMilliseconds() + hitValue
+        
+        if abilityId == 118860 then
+            spitTime = spitTime + 900
+        else
+            spitTime = spitTime + 700
+        end
 
         HowToSunspire.FireSpitUI()
         Hts_Spit:SetHidden(false)
@@ -831,6 +870,8 @@ function HowToSunspire.ResetAll()
     Hts_Storm:SetHidden(true)
     Hts_Geyser:SetHidden(true)
     Hts_Negate:SetHidden(true)
+    Hts_Shield:SetHidden(true)
+
     Hts_NextFlare:SetHidden(true)
     Hts_NextMeteor:SetHidden(true)
     zo_callLater(function()
@@ -842,6 +883,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
@@ -874,6 +916,7 @@ function HowToSunspire.ResetAll()
     prevIce = 0
     iceTime = 0
     isComet = true
+    shieldChargeTime = 0
     iceState = false
     laserTime = 0
     rightToLeft = 0

@@ -9,13 +9,13 @@ HowToSunspire.AbilitiesToTrack = {
     [121422] = HowToSunspire.HeavyAttack, --HA from cone downstair
     [117071] = HowToSunspire.HeavyAttack, --HA from 1H & Shield
 
-    --[117071] = HowToSunspire.ShieldCharge, --shield cjharge from 1H & Shield
+    [117071] = HowToSunspire.ShieldCharge, --shield charge from 1H & Shield
 
     [120890] = HowToSunspire.Block, --jump from the red cats
-    --[122012] = HowToSunspire.Block, --jump from white cats
+    [122012] = HowToSunspire.Block, --jump from white cats
 
     [121075] = HowToSunspire.Comet, --comet from downstair (not on someone) 121074
-    [120359] = HowToSunspire.Comet, --comet from lokkestiiz that bump 
+    [120359] = HowToSunspire.Comet, --comet from lokkestiiz that bump
     [116636] = HowToSunspire.Comet, --comet from mage trash 116619
     [117251] = HowToSunspire.Comet, --molten meteor veteran
     [123067] = HowToSunspire.Comet, --molten meteor veteran
@@ -45,3 +45,20 @@ HowToSunspire.AbilitiesToTrack = {
     [121436] = HowToSunspire.InterruptDown, --attack to interrupt down
     [121411] = HowToSunspire.NegateField, --negate from downstair
 }
+
+--Add a notification :
+    --add the ID here with a function
+    --main file :
+        --create the corresping function
+        --create the UI function
+        --add default values
+        --add new events / variables to the reset function
+    --settings file :
+        --add to unlock all
+        --add an enable / unlock option
+        --add to the text size
+    --UI file :
+        --add to the init function
+        --add the saveLoc function
+    --XML file :
+        --add th new part of UI
