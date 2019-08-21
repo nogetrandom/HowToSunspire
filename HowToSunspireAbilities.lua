@@ -9,7 +9,7 @@ HowToSunspire.AbilitiesToTrack = {
     [121422] = HowToSunspire.HeavyAttack, --HA from cone downstair
     [117071] = HowToSunspire.HeavyAttack, --HA from 1H & Shield
 
-    [117071] = HowToSunspire.ShieldCharge, --shield charge from 1H & Shield
+    [117075] = HowToSunspire.ShieldCharge, --shield charge from 1H & Shield
 
     [120890] = HowToSunspire.Block, --jump from the red cats
     [122012] = HowToSunspire.Block, --jump from white cats
