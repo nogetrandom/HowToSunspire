@@ -216,7 +216,7 @@
 				HowToSunspire.SaveLoc_Shield()
 			</OnMoveStop>
             <Controls>
-                <Label name="$(parent)_Label" width="200" height="40" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" inheritAlpha="true" color="FFFFFF" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="|cff1493Shield Charge:|r 0.8">
+                <Label name="$(parent)_Label" width="200" height="40" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" inheritAlpha="true" color="FFFFFF" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="|c7fffd4Shield Charge:|r 0.8">
                     <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
                 </Label>
             </Controls>			
