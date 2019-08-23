@@ -501,7 +501,7 @@ function HowToSunspire.FireSpitUI()
     local timer = spitTime - currentTime
 
     if timer >= 0 then
-        Hts_Spit_Label:SetText("|c7fffd4Spit: |r" .. tostring(string.format("%.1f", timer / 1000)))
+        Hts_Spit_Label:SetText("|cff1493Spit: |r" .. tostring(string.format("%.1f", timer / 1000)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireSpitTimer")
         Hts_Spit:SetHidden(true)
