@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.2.1"
+HowToSunspire.version = "1.3.1"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -32,7 +32,10 @@ HowToSunspire.Default = {
         Geyser = 0,
         NextFlare = 0,
         NextMeteor = 0,
+        Negate = 0,
+        Shield = 0,
         Cata = 0,
+        Leap = 0,
     },
     OffsetY = {
         HA = 0,
@@ -50,7 +53,10 @@ HowToSunspire.Default = {
         Geyser = 50,
         NextFlare = -100,
         NextMeteor = 150,
+        Negate = -50,
+        Shield = -50,
         Cata = -100,
+        Leap = -50,
     },
     Enable = {
         HA = true,
@@ -70,7 +76,10 @@ HowToSunspire.Default = {
         Geyser = true,
         NextFlare = true,
         NextMeteor = true,
+        Negate = true,
+        Shield = true,
         Cata = true,
+        Leap = true,
 
         Sending = false,
     },
@@ -155,19 +164,49 @@ function HowToSunspire.HideBlock()
     Hts_Block:SetHidden(true)
 end
 
+function HowToSunspire.Leap(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.Leap == true then
+        if hitValue > 0 then
+            zo_callLater(function ()
+                Hts_Leap:SetHidden(false)
+                
+                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
+                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideLeap", 1800, HowToSunspire.HideLeap)
+            end, hitValue - 0)
+        else
+            zo_callLater(function ()
+                Hts_Leap:SetHidden(false)
+                
+                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
+                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideLeap", 1800, HowToSunspire.HideLeap)
+            end, hitValue)
+        end
+    end
+end
+
+function HowToSunspire.HideLeap()
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
+    Hts_Leap:SetHidden(true)
+end
+
 local cometTime
 local isComet = true
 function HowToSunspire.Comet(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
-    if sV.Enable.Comet ~= true or hitValue < 100 or targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
-    if (abilityId == 120359 and result ~= ACTION_RESULT_BEGIN) or
-    (abilityId ~= 120359 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION) then return end
-
-    cometTime = GetGameTimeMilliseconds() + hitValue
     if abilityId == 117251 or abilityId == 123067 then
         isComet = false
         HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
     else
         isComet = true
+    end
+
+    if sV.Enable.Comet ~= true or hitValue < 100 or targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
+    if (abilityId == 120359 and result ~= ACTION_RESULT_BEGIN) or
+    (abilityId ~= 120359 and result ~= ACTION_RESULT_EFFECT_GAINED_DURATION) then return end
+
+    cometTime = GetGameTimeMilliseconds() + hitValue
+
+    if abilityId == 120359 then
+        cometTime = cometTime + 1000
     end
 
     HowToSunspire.CometUI()
@@ -191,6 +230,32 @@ function HowToSunspire.CometUI()
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
         Hts_Comet:SetHidden(true)
+    end
+end
+
+local shieldChargeTime
+function HowToSunspire.ShieldCharge(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and targetType == COMBAT_UNIT_TYPE_PLAYER and sV.Enable.Shield == true then
+        local currentTime = GetGameTimeMilliseconds()
+        shieldChargeTime = currentTime + hitValue
+
+        HowToSunspire.ShieldChargeTimerUI()
+        Hts_Shield:SetHidden(false)
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer", 100, HowToSunspire.ShieldChargeTimerUI)
+    end
+end
+
+function HowToSunspire.ShieldChargeTimerUI()
+    local currentTime = GetGameTimeMilliseconds()
+    local timer = shieldChargeTime - currentTime
+
+    if timer >= 0 then
+        Hts_Shield_Label:SetText("|c7fffd4Shield Charge: |r" .. tostring(string.format("%.1f", timer / 1000)))
+    else
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer")
+        Hts_Shield:SetHidden(true)
     end
 end
 
@@ -348,7 +413,7 @@ function HowToSunspire.NextFlare(_, result, _, _, _, _, _, _, targetName, target
 
     if abilityId == 121722 and result == ACTION_RESULT_BEGIN then
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 32
-    elseif abilityId == 121459 and result == ACTION_RESULT_EFFECT_FADED then
+    elseif abilityId == 121459 and result == ACTION_RESULT_EFFECT_FADED then   
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 30
     elseif abilityId == nil and result == nil and targetName == nil and targetType == nil and hitValue == nil and targetId == nil then 
         --from fight begin
@@ -471,7 +536,13 @@ function HowToSunspire.FireSpit(_, result, _, _, _, _, _, _, _, targetType, hitV
     if targetType ~= COMBAT_UNIT_TYPE_PLAYER or hitValue < 300 or sV.Enable.Spit ~= true then return end
 
 	if result == ACTION_RESULT_BEGIN then
-		spitTime = GetGameTimeMilliseconds() + hitValue
+        spitTime = GetGameTimeMilliseconds() + hitValue
+        
+        if abilityId == 118860 then
+            spitTime = spitTime + 900
+        else
+            spitTime = spitTime + 700
+        end
 
         HowToSunspire.FireSpitUI()
         Hts_Spit:SetHidden(false)
@@ -487,7 +558,7 @@ function HowToSunspire.FireSpitUI()
     local timer = spitTime - currentTime
 
     if timer >= 0 then
-        Hts_Spit_Label:SetText("|c7fffd4Spit: |r" .. tostring(string.format("%.1f", timer / 1000)))
+        Hts_Spit_Label:SetText("|cff1493Spit: |r" .. tostring(string.format("%.1f", timer / 1000)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireSpitTimer")
         Hts_Spit:SetHidden(true)
@@ -502,6 +573,7 @@ function HowToSunspire.Thrash(_, result, _, _, _, _, _, _, _, targetType, hitVal
         thrashTime = currentTime + hitValue
 
         HowToSunspire.ThrashTimerUI()
+        PlaySound(SOUNDS.CHAMPION_POINTS_COMMITTED)
         Hts_Thrash:SetHidden(false)
 
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ThrashTimer")
@@ -734,6 +806,21 @@ function HowToSunspire.PinsTimerUI()
     end
 end
 
+function HowToSunspire.NegateField(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and targetType == COMBAT_UNIT_TYPE_PLAYER and sV.Enable.Negate == true then
+        Hts_Negate:SetHidden(false)
+        PlaySound(SOUNDS.DUEL_START)
+
+		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideNegate")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideNegate", 2500, HowToSunspire.HideNegate)
+    end
+end
+
+function HowToSunspire.HideNegate()
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideNegate")
+    Hts_Negate:SetHidden(true)
+end
+
 ----------------------------------
 ---- SHARE PART FOR EXPLOSION ----
 ----------------------------------
@@ -839,9 +926,13 @@ function HowToSunspire.ResetAll()
     Hts_Wipe:SetHidden(true)
     Hts_Storm:SetHidden(true)
     Hts_Geyser:SetHidden(true)
+    Hts_Negate:SetHidden(true)
+    Hts_Shield:SetHidden(true)
+    Hts_Cata:SetHidden(true)
+    Hts_Leap:SetHidden(true)
+
     Hts_NextFlare:SetHidden(true)
     Hts_NextMeteor:SetHidden(true)
-    Hts_Cata:SetHidden(true)
     zo_callLater(function()
         Hts_NextFlare:SetHidden(true)
         Hts_NextMeteor:SetHidden(true)
@@ -850,7 +941,9 @@ function HowToSunspire.ResetAll()
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
@@ -868,6 +961,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "InterruptTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "PinsTimer")
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideNegate")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CataTimer")
 
@@ -883,6 +977,7 @@ function HowToSunspire.ResetAll()
     prevIce = 0
     iceTime = 0
     isComet = true
+    shieldChargeTime = 0
     iceState = false
     laserTime = 0
     rightToLeft = 0
@@ -902,6 +997,7 @@ function HowToSunspire.ResetAll()
     canSend = false
     firstStormTrigger = true
     cataTime = 0
+
 end
 
 function HowToSunspire.GetGroupTags(_, _, _, _, unitTag, _, _, _, _, _, _, _, _, unitName, unitId, _, _)

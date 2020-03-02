@@ -33,7 +33,10 @@ function HowToSunspire.CreateSettingsWindow()
 		Geyser = false,
 		NextFlare = false,
 		NextMeteor = false,
-		Cata = false,
+		Negate = false,
+		Shield = false,
+        Cata = false,
+        Leap = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -70,7 +73,10 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_Geyser:SetHidden(not newValue)
 						Hts_NextFlare:SetHidden(not newValue)
 						Hts_NextMeteor:SetHidden(not newValue)
+						Hts_Negate:SetHidden(not newValue)
+						Hts_Shield:SetHidden(not newValue)
 						Hts_Cata:SetHidden(not newValue)
+						Hts_Leap:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -94,6 +100,16 @@ function HowToSunspire.CreateSettingsWindow()
 					end,
 				},
 				{	type = "checkbox",
+					name = "Unlock Leap",
+					tooltip = "Use it to set the position of the Leap text.",
+					default = false,
+					getFunc = function() return Unlock.Leap end,
+					setFunc = function(newValue)
+						Unlock.Leap = newValue
+						Hts_Leap:SetHidden(not newValue)  
+					end,
+				},
+				{	type = "checkbox",
 					name = "Unlock Comet / Meteor",
 					tooltip = "Use it to set the position of the Comet and Meteor notifications.",
 					default = false,
@@ -101,6 +117,16 @@ function HowToSunspire.CreateSettingsWindow()
 					setFunc = function(newValue)
 						Unlock.Comet = newValue
 						Hts_Comet:SetHidden(not newValue)  
+					end,
+				},
+				{	type = "checkbox",
+					name = "Unlock Shield Charge",
+					tooltip = "Use it to set the position of the Shield Charge alert.",
+					default = false,
+					getFunc = function() return Unlock.Shield end,
+					setFunc = function(newValue)
+						Unlock.Shield = newValue
+						Hts_Shield:SetHidden(not newValue)  
 					end,
 				},
 				{	type = "checkbox",
@@ -224,6 +250,16 @@ function HowToSunspire.CreateSettingsWindow()
 					end,
 				},
 				{	type = "checkbox",
+					name = "Unlock Negate Notification",
+					tooltip = "Use it to set the position of Negate notification while downstair.",
+					default = false,
+					getFunc = function() return Unlock.Negate end,
+					setFunc = function(newValue)
+						Unlock.Negate = newValue
+						Hts_Negate:SetHidden(not newValue)
+					end,
+				},
+				{	type = "checkbox",
 					name = "Unlock Cataclysm",
 					tooltip = "Use it to set the position of the cataclysm.",
 					default = false,
@@ -256,7 +292,10 @@ function HowToSunspire.CreateSettingsWindow()
 				HowToSunspire.SetFontSize(Hts_Geyser_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_NextFlare_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_NextMeteor_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Negate_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Shield_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_Cata_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Leap_Label, newValue)
 			end,
             min = 32,
             max = 56,
@@ -290,12 +329,30 @@ function HowToSunspire.CreateSettingsWindow()
 			end,
 		},
 		{	type = "checkbox",
+			name = "Enable Leap",
+			tooltip = "Tracks the 2h adds leap that you have to block.",
+			default = true,
+			getFunc = function() return sV.Enable.Leap end,
+			setFunc = function(newValue)  
+				sV.Enable.Leap = newValue
+			end,
+		},
+		{	type = "checkbox",
 			name = "Enable Comet / Meteor",
 			tooltip = "Tracks ALL Meteors and Comets in the trial including Nahvintaas Molten Meteor.",
 			default = true,
 			getFunc = function() return sV.Enable.Comet end,
 			setFunc = function(newValue)
 				sV.Enable.Comet = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Shield Charge",
+			tooltip = "Tracks the Shield Charge from the 1H & Shield add.",
+			default = true,
+			getFunc = function() return sV.Enable.Shield end,
+			setFunc = function(newValue)
+				sV.Enable.Shield = newValue
 			end,
 		},
 		{
@@ -404,7 +461,7 @@ function HowToSunspire.CreateSettingsWindow()
 			text = " ",
 		},
 		{	type = "checkbox",
-			name = "Enable Fire Strom",
+			name = "Enable Fire Storm",
 			tooltip = "Tracks Nahvis arena-sized AoE.\n|cff0000Note:|r Will also notify you while in portal if you have LibMapPing and LibGPS enable, and someone using this addon upstair.",
 			default = true,
 			getFunc = function() return sV.Enable.Storm end,
@@ -483,6 +540,15 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.Pins end,
 			setFunc = function(newValue)
 				sV.Enable.Pins = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Negate Field",
+			tooltip = "Show a notification when you are targeted by the Negate Field while downstair.",
+			default = true,
+			getFunc = function() return sV.Enable.Negate end,
+			setFunc = function(newValue)
+				sV.Enable.Negate = newValue
 			end,
 		},
 	}
