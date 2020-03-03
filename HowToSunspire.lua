@@ -34,6 +34,8 @@ HowToSunspire.Default = {
         NextMeteor = 0,
         Negate = 0,
         Shield = 0,
+        Cata = 0,
+        Leap = 0,
     },
     OffsetY = {
         HA = 0,
@@ -53,6 +55,8 @@ HowToSunspire.Default = {
         NextMeteor = 150,
         Negate = -50,
         Shield = -50,
+        Cata = -100,
+        Leap = -50,
     },
     Enable = {
         HA = true,
@@ -74,6 +78,8 @@ HowToSunspire.Default = {
         NextMeteor = true,
         Negate = true,
         Shield = true,
+        Cata = true,
+        Leap = true,
 
         Sending = false,
     },
@@ -156,6 +162,31 @@ end
 function HowToSunspire.HideBlock()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
     Hts_Block:SetHidden(true)
+end
+
+function HowToSunspire.Leap(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.Leap == true then
+        if hitValue > 400 then
+            zo_callLater(function ()
+                Hts_Leap:SetHidden(false)
+                
+                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
+                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideLeap", 2500, HowToSunspire.HideLeap)
+            end, hitValue - 400)
+        else
+            zo_callLater(function ()
+                Hts_Leap:SetHidden(false)
+                
+                EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
+                EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideLeap", 2500, HowToSunspire.HideLeap)
+            end, hitValue)
+        end
+    end
+end
+
+function HowToSunspire.HideLeap()
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
+    Hts_Leap:SetHidden(true)
 end
 
 local cometTime
@@ -408,6 +439,32 @@ function HowToSunspire.NextFlareUI()
         Hts_NextFlare_Label:SetText("|ce51919Next Flare: |rINC")
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "NextFlareTimer")
         --Hts_NextFlare:SetHidden(true)
+    end
+end
+
+local cataTime
+function HowToSunspire.Cata(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+    if result == ACTION_RESULT_BEGIN and sV.Enable.Cata == true then
+        local currentTime = GetGameTimeMilliseconds()
+        cataTime = currentTime + hitValue
+
+        HowToSunspire.CataTimerUI()
+        Hts_Cata:SetHidden(false)
+
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CataTimer")
+        EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "CataTimer", 100, HowToSunspire.CataTimerUI)
+    end
+end
+
+function HowToSunspire.CataTimerUI()
+    local currentTime = GetGameTimeMilliseconds()
+    local timer = cataTime - currentTime
+
+    if timer >= 0 then
+        Hts_Cata_Label:SetText("|ce51919Cataclysm Ends in: |r" .. tostring(string.format("%.1f", timer / 1000)))
+    else
+        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CataTimer")
+        Hts_Cata:SetHidden(true)
     end
 end
 
@@ -871,6 +928,8 @@ function HowToSunspire.ResetAll()
     Hts_Geyser:SetHidden(true)
     Hts_Negate:SetHidden(true)
     Hts_Shield:SetHidden(true)
+    Hts_Cata:SetHidden(true)
+    Hts_Leap:SetHidden(true)
 
     Hts_NextFlare:SetHidden(true)
     Hts_NextMeteor:SetHidden(true)
@@ -882,6 +941,7 @@ function HowToSunspire.ResetAll()
     --unregister UI timer events
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HeavyAttackTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
@@ -903,6 +963,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "Pins", EVENT_COMBAT_EVENT)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideNegate")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "FireStormTimer")
+    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CataTimer")
 
     --[[if LibMapPing then
         LibMapPing:RemoveMapPing(MAP_PIN_TYPE_PING)
@@ -935,6 +996,8 @@ function HowToSunspire.ResetAll()
     canReceive = false
     canSend = false
     firstStormTrigger = true
+    cataTime = 0
+
 end
 
 function HowToSunspire.GetGroupTags(_, _, _, _, unitTag, _, _, _, _, _, _, _, _, unitName, unitId, _, _)

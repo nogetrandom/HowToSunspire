@@ -35,6 +35,8 @@ function HowToSunspire.CreateSettingsWindow()
 		NextMeteor = false,
 		Negate = false,
 		Shield = false,
+        Cata = false,
+        Leap = false,
 	}
 
 	local sV = HowToSunspire.savedVariables
@@ -73,6 +75,8 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_NextMeteor:SetHidden(not newValue)
 						Hts_Negate:SetHidden(not newValue)
 						Hts_Shield:SetHidden(not newValue)
+						Hts_Cata:SetHidden(not newValue)
+						Hts_Leap:SetHidden(not newValue)
 					end,
 				},
 				{	type = "checkbox",
@@ -93,6 +97,16 @@ function HowToSunspire.CreateSettingsWindow()
 					setFunc = function(newValue)
 						Unlock.Block = newValue
 						Hts_Block:SetHidden(not newValue)  
+					end,
+				},
+				{	type = "checkbox",
+					name = "Unlock Leap",
+					tooltip = "Use it to set the position of the Leap text.",
+					default = false,
+					getFunc = function() return Unlock.Leap end,
+					setFunc = function(newValue)
+						Unlock.Leap = newValue
+						Hts_Leap:SetHidden(not newValue)  
 					end,
 				},
 				{	type = "checkbox",
@@ -245,6 +259,16 @@ function HowToSunspire.CreateSettingsWindow()
 						Hts_Negate:SetHidden(not newValue)
 					end,
 				},
+				{	type = "checkbox",
+					name = "Unlock Cataclysm",
+					tooltip = "Use it to set the position of the cataclysm.",
+					default = false,
+					getFunc = function() return Unlock.Cata end,
+					setFunc = function(newValue)
+						Unlock.Cata = newValue
+						Hts_Cata:SetHidden(not newValue)
+					end,
+				},
 			},
 		},
 		{	type = "slider",
@@ -270,6 +294,8 @@ function HowToSunspire.CreateSettingsWindow()
 				HowToSunspire.SetFontSize(Hts_NextMeteor_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_Negate_Label, newValue)
 				HowToSunspire.SetFontSize(Hts_Shield_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Cata_Label, newValue)
+				HowToSunspire.SetFontSize(Hts_Leap_Label, newValue)
 			end,
             min = 32,
             max = 56,
@@ -300,6 +326,15 @@ function HowToSunspire.CreateSettingsWindow()
 			getFunc = function() return sV.Enable.Block end,
 			setFunc = function(newValue)  
 				sV.Enable.Block = newValue
+			end,
+		},
+		{	type = "checkbox",
+			name = "Enable Leap",
+			tooltip = "Tracks the 2h adds leap that you have to block.",
+			default = true,
+			getFunc = function() return sV.Enable.Leap end,
+			setFunc = function(newValue)  
+				sV.Enable.Leap = newValue
 			end,
 		},
 		{	type = "checkbox",
@@ -373,6 +408,15 @@ function HowToSunspire.CreateSettingsWindow()
 				sV.Enable.NextFlare = newValue
 			end,
 		},
+		{	type = "checkbox",
+			name = "Enable Cataclysm",
+			tooltip = "Counts down the remaining time until Cataclysm ends.",
+			default = true,
+			getFunc = function() return sV.Enable.Cata end,
+			setFunc = function(newValue)
+				sV.Enable.Cata = newValue
+			end,
+		},
 		{
 			type = "header",
 			name = "Nahviintaas Notifications",
@@ -417,7 +461,7 @@ function HowToSunspire.CreateSettingsWindow()
 			text = " ",
 		},
 		{	type = "checkbox",
-			name = "Enable Fire Strom",
+			name = "Enable Fire Storm",
 			tooltip = "Tracks Nahvis arena-sized AoE.\n|cff0000Note:|r Will also notify you while in portal if you have LibMapPing and LibGPS enable, and someone using this addon upstair.",
 			default = true,
 			getFunc = function() return sV.Enable.Storm end,
