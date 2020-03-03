@@ -191,7 +191,7 @@ end
 
 local cometTime
 local isComet = true
-function HowToSunspire.Comet(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
+function HowToSunspire.Comet(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetUnitId, abilityId)
     if abilityId == 117251 or abilityId == 123067 then
         isComet = false
         HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
@@ -388,7 +388,7 @@ function HowToSunspire.LavaGeyser(_, result, _, _, _, _, _, _, targetName, targe
             EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideGeyser", 2500, HowToSunspire.HideGeyser)
         elseif HowToSunspire.groupMembers[targetId].tag then 
             --copied from CCA
-		SetMapToPlayerLocation()
+		    SetMapToPlayerLocation()
             local x1, y1 = GetMapPlayerPosition("player")
             local x2, y2 = GetMapPlayerPosition(HowToSunspire.groupMembers[targetId].tag)
             if (math.sqrt((x1 - x2)^2 + (y1 - y2)^2) * 1000) < 2.8 then
@@ -629,6 +629,78 @@ function HowToSunspire.MarkForDeath(_, result, _, _, _, _, _, _, _, targetType, 
     if result == ACTION_RESULT_BEGIN then
         nextMeteorTime = nextMeteorTime + 1.5
     end
+end
+
+local listUserMeteor
+local cptUserMeteor
+function HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetId, abilityId)
+    if listUserMeteor == nil or cptUserMeteor >= 3 then
+        listUserMeteor = {}
+        cptUserMeteor = 0
+    end
+
+    if HowToSunspire.groupMembers[targetId].tag then 
+        cptUserMeteor = cptUserMeteor + 1
+        listUserMeteor[targetName] = GetGroupMemberSelectedRole(HowToSunspire.groupMembers[targetId].tag)
+    end
+
+    if cptUserMeteor >= 3 then
+        local posToDrop = {
+            right = nil,
+            back  = nil,
+            left  = nil
+        }
+        --Priority is for the statues tank
+        for key, value in spairs(listUserMeteor) do
+            if key == nameStatuesTank then
+                posToDrop.back = key
+            end
+        end
+        --Then for the main tank and kite heal
+        for key, value in spairs(listUserMeteor) do
+            if key == nameKiteHeal or key == nameMainTank then
+                posToDrop = fillPosToDrop(posToDrop, key)
+            end
+        end
+        --Then come other tanks and heals
+        for key, value in spairs(listUserMeteor) do
+            if value == LFG_ROLE_HEAL or value == LFG_ROLE_TANK then
+                posToDrop = fillPosToDrop(posToDrop, key)
+            end
+        end
+        --Then the dds
+        for key, value in spairs(listUserMeteor) do
+            posToDrop = fillPosToDrop(posToDrop, key)
+        end
+
+    end
+end
+
+--found on stackoverflow
+local function spairs(t)
+    local keys = {}
+    for k in pairs(t) do keys[#keys+1] = k end
+
+    table.sort(keys)
+
+    local i = 0
+    return function()
+        i = i + 1
+        if keys[i] then
+            return keys[i], t[keys[i]]
+        end
+    end
+end
+
+local function fillPosToDrop(posToDrop, name)
+    if posToDrop.right == nil then
+        posToDrop.right = name
+    elseif posToDrop.back == nil then
+        posToDrop.back = name
+    else
+        posToDrop.left = name
+    end
+    return posToDrop
 end
 
 ------------------------
