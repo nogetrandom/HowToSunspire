@@ -699,9 +699,15 @@ function HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, t
     end
     --if player isnt part of the players with meteor on him
     if retour then return end
-    --Then for the main tank and kite heal
+    --Then for the main tank
     for key, value in spairs(listUserMeteor) do
-        if key == sV.nameKiteHeal or key == sV.nameMainTank then
+        if key == sV.nameMainTank then
+            posToDrop = fillPosToDrop(posToDrop, key)
+        end
+    end
+    --Then for the kite heal
+    for key, value in spairs(listUserMeteor) do
+        if key == sV.nameKiteHeal then
             posToDrop = fillPosToDrop(posToDrop, key)
         end
     end
