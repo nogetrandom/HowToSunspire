@@ -680,7 +680,7 @@ function HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, t
         listUserMeteor[HowToSunspire.groupMembers[targetId].name] = GetGroupMemberSelectedRole(HowToSunspire.groupMembers[targetId].tag)
     end
 
-    if targetType ~= COMBAT_UNIT_TYPE_PLAYER or cptUserMeteor < 3 then return end
+    if cptUserMeteor < 3 then return end
 
     local retour = true
     posToDrop = {
