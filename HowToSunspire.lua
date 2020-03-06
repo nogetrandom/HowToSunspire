@@ -199,7 +199,7 @@ function HowToSunspire.Comet(_, result, _, _, _, _, _, _, targetName, targetType
     if abilityId == 117251 or abilityId == 123067 then
         isComet = false
         HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
-        if sV.Enable.AdvancedMeteor then
+        if sV.Enable.AdvancedMeteor and result == ACTION_RESULT_EFFECT_GAINED_DURATION then
             return HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetId, abilityId)
         end
     else
