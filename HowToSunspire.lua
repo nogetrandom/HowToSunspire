@@ -674,7 +674,7 @@ function HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, t
         cptUserMeteor = 0
     end
 
-    if HowToSunspire.groupMembers[targetId].tag then 
+    if targetId and HowToSunspire.groupMembers[targetId].tag then 
         cptUserMeteor = cptUserMeteor + 1
         cometTime = GetGameTimeMilliseconds() + hitValue
         listUserMeteor[HowToSunspire.groupMembers[targetId].name] = GetGroupMemberSelectedRole(HowToSunspire.groupMembers[targetId].tag)
