@@ -199,9 +199,9 @@ function HowToSunspire.Comet(_, result, _, _, _, _, _, _, targetName, targetType
     if abilityId == 117251 or abilityId == 123067 then
         isComet = false
         HowToSunspire.NextMeteor(_, result, _, _, _, _, _, _, _, targetType, hitValue, _, _, _, _, _, abilityId)
-        if sV.Enable.AdvancedMeteor and result == ACTION_RESULT_EFFECT_GAINED_DURATION then
+        --[[if sV.Enable.AdvancedMeteor and result == ACTION_RESULT_EFFECT_GAINED_DURATION then
             return HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetId, abilityId)
-        end
+        end]]
     else
         isComet = true
     end
@@ -298,9 +298,9 @@ function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitVa
         end, 4000)
 
         --events for both ice took
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
+        --[[EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
         EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED, HowToSunspire.IceTombFinished)
-        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID, 119638)
+        EVENT_MANAGER:AddFilterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID, 119638)]]
     end
 end
 
@@ -314,17 +314,20 @@ function HowToSunspire.IceTombTimerUI()
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffremain: |r" .. tostring(string.format("%.0f", timer)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
-        EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
+        --EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
         Hts_Ice:SetHidden(true)
     end
 end
 
 local iceState = false
+local cptIce
 function HowToSunspire.IceTombFinished(_, result, _, _, unitTag, _, _, _, _, _, _, _, _, unitName, _, abilityId, _)
     if result == EFFECT_RESULT_GAINED then
         iceState = true
-    elseif result == EFFECT_RESULT_FADED and iceState == true then
+        cptIce = cptIce + 1
+    elseif result == EFFECT_RESULT_FADED and iceState == true and cptIce >= 2 then
         iceState = false
+        cptIce = 0
 
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
         EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
@@ -674,14 +677,23 @@ function HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, t
         cptUserMeteor = 0
     end
 
-    if targetId and HowToSunspire.groupMembers[targetId].tag then 
+    --[[if targetId and HowToSunspire.groupMembers[targetId] and HowToSunspire.groupMembers[targetId].tag then 
         cptUserMeteor = cptUserMeteor + 1
         cometTime = GetGameTimeMilliseconds() + hitValue
         listUserMeteor[HowToSunspire.groupMembers[targetId].name] = GetGroupMemberSelectedRole(HowToSunspire.groupMembers[targetId].tag)
+        d("Test 1")
+    end]]
+    
+    for key, value in pairs(HowToSunspire.groupMembers) do
+        if value.name == targetName then
+            listUserMeteor[targetName] = GetGroupMemberSelectedRole(value.tag)
+            cptUserMeteor = cptUserMeteor + 1
+            cometTime = GetGameTimeMilliseconds() + hitValue
+        end
     end
 
     if cptUserMeteor < 3 then return end
-
+    d("Test 2")
     local retour = true
     posToDrop = {
         ["right"] = nil,
@@ -1075,7 +1087,7 @@ function HowToSunspire.ResetAll()
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "ShieldChargeTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
-    EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
+    --EVENT_MANAGER:UnregisterForEvent(HowToSunspire.name .. "IceTombFinished", EVENT_EFFECT_CHANGED)
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "LokkeLaserTimer")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideAtro")
     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideGeyser")
@@ -1104,6 +1116,7 @@ function HowToSunspire.ResetAll()
     listHA = {}
     cometTime = 0
     iceNumber = 0
+    cptIce = 0
     prevIce = 0
     iceTime = 0
     isComet = true
