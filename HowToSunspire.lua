@@ -122,7 +122,7 @@ function HowToSunspire.HeavyAttackUI()
         local timer = value - currentTime
         if timer >= 0 then
             if text == "" then
-                text = text .. tostring(string.format("%.1f", timer / 1000)) 
+                text = text .. tostring(string.format("%.1f", timer / 1000))
             else
                 text = text .. "|cff1493 / |r" .. tostring(string.format("%.1f", timer / 1000))
             end
@@ -147,7 +147,7 @@ function HowToSunspire.Block(_, result, _, _, _, _, _, _, _, targetType, hitValu
             zo_callLater(function ()
                 Hts_Block:SetHidden(false)
                 PlaySound(SOUNDS.DUEL_START)
-                
+
                 EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
                 EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideBlock", 2500, HowToSunspire.HideBlock)
             end, hitValue - 400)
@@ -155,7 +155,7 @@ function HowToSunspire.Block(_, result, _, _, _, _, _, _, _, targetType, hitValu
             zo_callLater(function ()
                 Hts_Block:SetHidden(false)
                 PlaySound(SOUNDS.DUEL_START)
-                
+
                 EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideBlock")
                 EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideBlock", 2500, HowToSunspire.HideBlock)
             end, hitValue)
@@ -173,14 +173,14 @@ function HowToSunspire.Leap(_, result, _, _, _, _, _, _, _, targetType, hitValue
         if hitValue > 400 then
             zo_callLater(function ()
                 Hts_Leap:SetHidden(false)
-                
+
                 EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
                 EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideLeap", 2500, HowToSunspire.HideLeap)
             end, hitValue - 400)
         else
             zo_callLater(function ()
                 Hts_Leap:SetHidden(false)
-                
+
                 EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideLeap")
                 EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideLeap", 2500, HowToSunspire.HideLeap)
             end, hitValue)
@@ -289,7 +289,7 @@ function HowToSunspire.IceTomb(_, result, _, _, _, _, _, _, _, targetType, hitVa
 
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "IceTombTimer", 100, HowToSunspire.IceTombTimerUI)
-        
+
         --update all 1 seconds instead of all 0.1 seconds
         zo_callLater(function ()
             HowToSunspire.IceTombTimerUI()
@@ -306,11 +306,11 @@ end
 
 function HowToSunspire.IceTombTimerUI()
     local currentTime = GetGameTimeMilliseconds() / 1000
-    local timer = iceTime - currentTime 
+    local timer = iceTime - currentTime
 
     if timer >= 9 then
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffin: |r" .. tostring(string.format("%.1f", timer - 9)))
-    elseif timer >= 0 then 
+    elseif timer >= 0 then
         Hts_Ice_Label:SetText("|c00ffffIce |cff0000" .. iceNumber .. "|r |c00ffffremain: |r" .. tostring(string.format("%.0f", timer)))
     else
         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "IceTombTimer")
@@ -396,7 +396,7 @@ function HowToSunspire.LavaGeyser(_, result, _, _, _, _, _, _, targetName, targe
 
             EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideGeyser")
             EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideGeyser", 2500, HowToSunspire.HideGeyser)
-        elseif HowToSunspire.groupMembers[targetId].tag then 
+        elseif HowToSunspire.groupMembers[targetId].tag then
             --copied from CCA
 		    SetMapToPlayerLocation()
             local x1, y1 = GetMapPlayerPosition("player")
@@ -404,7 +404,7 @@ function HowToSunspire.LavaGeyser(_, result, _, _, _, _, _, _, targetName, targe
             if (math.sqrt((x1 - x2)^2 + (y1 - y2)^2) * 1000) < 2.8 then
                 Hts_Geyser:SetHidden(false)
                 PlaySound(SOUNDS.DUEL_START)
-        
+
                 EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "HideGeyser")
                 EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideGeyser", 2500, HowToSunspire.HideGeyser)
             end
@@ -423,9 +423,9 @@ function HowToSunspire.NextFlare(_, result, _, _, _, _, _, _, targetName, target
 
     if abilityId == 121722 and result == ACTION_RESULT_BEGIN then
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 32
-    elseif abilityId == 121459 and result == ACTION_RESULT_EFFECT_FADED then   
+    elseif abilityId == 121459 and result == ACTION_RESULT_EFFECT_FADED then
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 30
-    elseif abilityId == nil and result == nil and targetName == nil and targetType == nil and hitValue == nil and targetId == nil then 
+    elseif abilityId == nil and result == nil and targetName == nil and targetType == nil and hitValue == nil and targetId == nil then
         --from fight begin
         nextFlareTime = GetGameTimeMilliseconds() / 1000 + 6
     else
@@ -497,7 +497,7 @@ function HowToSunspire.SweepingBreath(_, result, _, _, _, _, _, _, _, targetType
 
 		EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "SweepingBreath")
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "SweepingBreath", 100, HowToSunspire.SweepingBreathUI)
-        
+
         --hide 5sec later
         EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "HideSweepingBreath", 5000, HowToSunspire.HideSweepingBreath)
     end
@@ -547,7 +547,7 @@ function HowToSunspire.FireSpit(_, result, _, _, _, _, _, _, _, targetType, hitV
 
 	if result == ACTION_RESULT_BEGIN then
         spitTime = GetGameTimeMilliseconds() + hitValue
-        
+
         if abilityId == 118860 then
             spitTime = spitTime + 900
         else
@@ -677,13 +677,13 @@ function HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, t
         cptUserMeteor = 0
     end
 
-    --[[if targetId and HowToSunspire.groupMembers[targetId] and HowToSunspire.groupMembers[targetId].tag then 
+    --[[if targetId and HowToSunspire.groupMembers[targetId] and HowToSunspire.groupMembers[targetId].tag then
         cptUserMeteor = cptUserMeteor + 1
         cometTime = GetGameTimeMilliseconds() + hitValue
         listUserMeteor[HowToSunspire.groupMembers[targetId].name] = GetGroupMemberSelectedRole(HowToSunspire.groupMembers[targetId].tag)
         d("Test 1")
     end]]
-    
+
     for key, value in pairs(HowToSunspire.groupMembers) do
         if value.name == targetName then
             listUserMeteor[targetName] = GetGroupMemberSelectedRole(value.tag)
@@ -815,7 +815,7 @@ function HowToSunspire.PortalTimerUI()
     local currentTime = GetGameTimeMilliseconds() / 1000
     local timer = portalTime - currentTime
 
-    if timer >= 11 then 
+    if timer >= 11 then
         Hts_Down_Label:SetText("|c7fffd4Portal: |r|cff0000" .. tostring(string.format("%.0f", timer)) .. "|r")
     elseif timer >= 0 then
         Hts_Down_Label:SetText("|c7fffd4Portal: |r" .. tostring(string.format("%.0f", timer)))
@@ -856,7 +856,7 @@ function HowToSunspire.IsDownstair(_, result, _, _, _, _, _, _, _, targetType, h
     elseif targetType ~= COMBAT_UNIT_TYPE_PLAYER then
         return
     end
-    
+
     if result == ACTION_RESULT_EFFECT_GAINED_DURATION or cptDownstair == 3 then
         --downstair = true
         cptDownstair = 0
@@ -995,7 +995,7 @@ function HowToSunspire.FireStorm(_, result, _, _, _, _, _, _, _, targetType, hit
         local LMP = LibMapPing
         LGPS:PushCurrentMap()
         SetMapToMapListIndex(WROTHGAR_MAP_INDEX)
-    
+
         local x = 42 * WROTHGAR_MAP_STEP_SIZE
         local y = 42 * WROTHGAR_MAP_STEP_SIZE
         LMP:SetMapPing(MAP_PIN_TYPE_PING, MAP_TYPE_LOCATION_CENTERED, x, y)
@@ -1019,7 +1019,7 @@ end
 
 function HowToSunspire.OnMapPing(pingType, pingTag, _, _, isLocalPlayerOwner)
     if not canReceive or not LibGPS2 or not LibMapPing or isLocalPlayerOwner or not sV.Enable.Storm then return end
-    
+
     local LGPS = LibGPS2
     local LMP = LibMapPing
 
@@ -1155,21 +1155,26 @@ function HowToSunspire.GetGroupTags(_, _, _, _, unitTag, _, _, _, _, _, _, _, _,
 	end
 end
 
+function HowToSunspire.AudioToggle( )
+	SetSetting(SETTING_TYPE_AUDIO, AUDIO_SETTING_AUDIO_ENABLED, "0")
+	zo_callLater(function() SetSetting(SETTING_TYPE_AUDIO, AUDIO_SETTING_AUDIO_ENABLED, "1") end, 500)
+end
+
 function HowToSunspire.CombatState()
     if IsUnitInCombat("player") and GetUnitName("boss1") == "Yolnahkriin" then
         HowToSunspire.NextFlare(_, nil, _, _, _, _, _, _, nil, nil, nil, _, _, _, _, nil, nil)
     end
 
     --on combat ended
-    zo_callLater(function() 
-        if (not IsUnitInCombat("player")) then 
+    zo_callLater(function()
+        if (not IsUnitInCombat("player")) then
             HowToSunspire.ResetAll()
         end
     end, 3000)
 end
 
 function HowToSunspire.OnPlayerActivated()
-    
+
     if GetZoneId(GetUnitZoneIndex("player")) == 1121 then --in Sunspire
         for k, v in pairs(HowToSunspire.AbilitiesToTrack) do --Register for abilities in the other lua file
             EVENT_MANAGER:RegisterForEvent(HowToSunspire.name .. "Ability" .. k, EVENT_COMBAT_EVENT, v)
@@ -1196,10 +1201,12 @@ function HowToSunspire:Initialize()
     sV = HowToSunspire.savedVariables
 	--Settings
 	HowToSunspire.CreateSettingsWindow()
+
+  ZO_CreateStringId("SI_BINDING_NAME_RESET_STUCK_AUDIO", "Reset Audio")
 	--UI
     HowToSunspire.InitUI()
 
-    if LibMapPing then 
+    if LibMapPing then
         LibMapPing:MutePing(MAP_PIN_TYPE_PING)
     end
 
