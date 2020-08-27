@@ -1155,7 +1155,7 @@ function HowToSunspire.GetGroupTags(_, _, _, _, unitTag, _, _, _, _, _, _, _, _,
 	end
 end
 
-function HowToSunspire.AudioToggle( )
+function HowToSunspire.AudioToggle( ) -- thanks to code65536
 	SetSetting(SETTING_TYPE_AUDIO, AUDIO_SETTING_AUDIO_ENABLED, "0")
 	zo_callLater(function() SetSetting(SETTING_TYPE_AUDIO, AUDIO_SETTING_AUDIO_ENABLED, "1") end, 500)
 end

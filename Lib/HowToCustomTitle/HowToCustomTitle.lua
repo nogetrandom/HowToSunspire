@@ -53,24 +53,33 @@ Changes: Rewrote how custom titles are added and stored to help reduce conflict 
 	- Added option to replace a title globally.
 ]]--
 
-LibCustomTitless = LibCustomTitless or {}
-local LibCustomTitless = LibCustomTitless
+--[[
 
-local libName = "LibCustomTitless"
+ Author: nogetrandom
+ version 22
+ Changes: Deleted a few letters and added a couple of new ones, and this is now independant from
+ LibCustomTitles and LibStub. Also added Dawnbringer title.
+
+]]--
+
+HowToCustomTitle = HowToCustomTitle or {}
+local HowToCustomTitle = HowToCustomTitle
+
+local libName = "HowToCustomTitle"
 EVENT_MANAGER:UnregisterForEvent(libName, EVENT_ADD_ON_LOADED)
 
-local LCC = LibCustomTitless
-LCC.name = "LibCustomTitlesS"
-LCC.version = 22
+local HTCT = HowToCustomTitle
+HTCT.name = "HowToCustomTitle"
+HTCT.version = 22
 -- local LibCustomTitles, oldminor = LibStub:NewLibrary(LIB_NAME, VERSION)
-if not LCC then return end
+if not HTCT then return end
 --
 local titles = {}
 
-LibCustomTitlessModules = LibCustomTitlessModules or {}
-function LibCustomTitless:RegisterModule(name, version)
+HowToCustomTitleModules = HowToCustomTitleModules or {}
+function HowToCustomTitle:RegisterModule(name, version)
 
-	local module = LibCustomTitlessModules[name]
+	local module = HowToCustomTitleModules[name]
 	if (module and module.version and module.version > version) then
 		return nil
 	end
@@ -81,23 +90,23 @@ function LibCustomTitless:RegisterModule(name, version)
 	module.RegisterTitle = RegisterTitle
 
 	--override any previous titles from an older version
-	LibCustomTitlessModules[name] = module
+	HowToCustomTitleModules[name] = module
 	return module
 end
 
-function LibCustomTitless:InitTitles()
-	for name, module in pairs(LibCustomTitlessModules) do
+function HowToCustomTitle:InitTitles()
+	for name, module in pairs(HowToCustomTitleModules) do
 		for _, title in ipairs(module.titles) do
 			self:RegisterTitle(unpack(title))
 		end
 	end
-	LibCustomTitlessModules = nil --remove from global
+	HowToCustomTitleModules = nil --remove from global
 end
 
 local lang = GetCVar("Language.2")
 
 local customTitles = {}
-function LibCustomTitless:RegisterTitle(displayName, charName, override, title, extra)
+function HowToCustomTitle:RegisterTitle(displayName, charName, override, title, extra)
 
 	if type(title) == "table" then
 		title = title[lang] or title["en"]
@@ -149,7 +158,7 @@ function LibCustomTitless:RegisterTitle(displayName, charName, override, title, 
 end
 
 local MAX_GRADIENT_STEPS = 10 --after that text just starts to disappear
-function LCC:ApplyColor(text, color, dbg)
+function HTCT:ApplyColor(text, color, dbg)
 
 	if type(color) == "string" then 	-- just a simple color
 		return "|c"..color:gsub("#","")..text.."|r"
@@ -201,7 +210,7 @@ function LCC:ApplyColor(text, color, dbg)
 	return gradientText
 end
 
-function LibCustomTitless:SplitText(text)
+function HowToCustomTitle:SplitText(text)
 
 	-- Thank you @Ayantir!
 	local splittedText = {}
@@ -250,7 +259,7 @@ function LibCustomTitless:SplitText(text)
 	return splittedText, #splittedText - lenOffset
 end
 
-function LibCustomTitless:Init()
+function HowToCustomTitle:Init()
 
 	self:InitTitles()
 
@@ -316,13 +325,13 @@ end
 local function OnAddonLoaded()
 	if not libLoaded then
 		libLoaded = true
-		-- local LCCI = LCC.name
-		LibCustomTitless:Init()
-		EVENT_MANAGER:UnregisterForEvent(LCC.name, EVENT_ADD_ON_LOADED)
+		-- local HTCTI = HTCT.name
+		HowToCustomTitle:Init()
+		EVENT_MANAGER:UnregisterForEvent(HTCT.name, EVENT_ADD_ON_LOADED)
 	end
 end
 
-EVENT_MANAGER:RegisterForEvent(LCC.name, EVENT_ADD_ON_LOADED, OnAddonLoaded)
+EVENT_MANAGER:RegisterForEvent(HTCT.name, EVENT_ADD_ON_LOADED, OnAddonLoaded)
 
 local LocaleTitles =
 {
