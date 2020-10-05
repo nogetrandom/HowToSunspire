@@ -5,7 +5,7 @@ HowToSunspire = HowToSunspire or {}
 local HowToSunspire = HowToSunspire
 
 HowToSunspire.name = "HowToSunspire"
-HowToSunspire.version = "1.4.0"
+HowToSunspire.version = "1.3.2"
 
 local WROTHGAR_MAP_INDEX  = 27
 local WROTHGAR_MAP_STEP_SIZE = 1.428571431461e-005
@@ -81,12 +81,12 @@ HowToSunspire.Default = {
         Cata = true,
         Leap = true,
 
-        AdvancedMeteor = true,
-        Sending = false,
+        -- AdvancedMeteor = true,
+        Sending = true,
     },
-    nameStatuesTank = "@Propet4",
-    nameMainTank = "@elfoblin",
-    nameKiteHeal = "@PatchIGuess",
+    -- nameStatuesTank = "@Propet4",
+    -- nameMainTank = "@elfoblin",
+    -- nameKiteHeal = "@PatchIGuess",
     FontSize = 40,
     wipeCallLater = 90,
 }
@@ -657,121 +657,121 @@ local function spairs(t)
     end
 end
 
-local function fillPosToDrop(posToDrop, name)
-    if posToDrop["right"] == nil then
-        posToDrop["right"] = name
-    elseif posToDrop["back"] == nil then
-        posToDrop["back"] = name
-    else
-        posToDrop["left"] = name
-    end
-    return posToDrop
-end
+-- local function fillPosToDrop(posToDrop, name)
+--     if posToDrop["right"] == nil then
+--         posToDrop["right"] = name
+--     elseif posToDrop["back"] == nil then
+--         posToDrop["back"] = name
+--     else
+--         posToDrop["left"] = name
+--     end
+--     return posToDrop
+-- end
 
-local listUserMeteor
-local cptUserMeteor
-local posToDrop = {}
-function HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetId, abilityId)
-    if listUserMeteor == nil or cptUserMeteor >= 3 then
-        listUserMeteor = {}
-        cptUserMeteor = 0
-    end
-
-    --[[if targetId and HowToSunspire.groupMembers[targetId] and HowToSunspire.groupMembers[targetId].tag then
-        cptUserMeteor = cptUserMeteor + 1
-        cometTime = GetGameTimeMilliseconds() + hitValue
-        listUserMeteor[HowToSunspire.groupMembers[targetId].name] = GetGroupMemberSelectedRole(HowToSunspire.groupMembers[targetId].tag)
-        d("Test 1")
-    end]]
-
-    for key, value in pairs(HowToSunspire.groupMembers) do
-        if value.name == targetName then
-            listUserMeteor[targetName] = GetGroupMemberSelectedRole(value.tag)
-            cptUserMeteor = cptUserMeteor + 1
-            cometTime = GetGameTimeMilliseconds() + hitValue
-        end
-    end
-
-    if cptUserMeteor < 3 then return end
-    d("Test 2")
-    local retour = true
-    posToDrop = {
-        ["right"] = nil,
-        ["back"]  = nil,
-        ["left"]  = nil
-    }
-    --Priority is for the statues tank
-    for key, value in spairs(listUserMeteor) do
-        if key == sV.nameStatuesTank then
-            posToDrop.back = key
-        end
-        if key == GetUnitDisplayName("player") then
-            retour = false
-        end
-    end
-    --if player isnt part of the players with meteor on him
-    if retour then return end
-    --Then for the main tank
-    for key, value in spairs(listUserMeteor) do
-        if key == sV.nameMainTank then
-            posToDrop = fillPosToDrop(posToDrop, key)
-        end
-    end
-    --Then for the kite heal
-    for key, value in spairs(listUserMeteor) do
-        if key == sV.nameKiteHeal then
-            posToDrop = fillPosToDrop(posToDrop, key)
-        end
-    end
-    --Then come other tanks and heals
-    for key, value in spairs(listUserMeteor) do
-        if value == LFG_ROLE_HEAL or value == LFG_ROLE_TANK then
-            posToDrop = fillPosToDrop(posToDrop, key)
-        end
-    end
-    --Then the dds
-    for key, value in spairs(listUserMeteor) do
-        posToDrop = fillPosToDrop(posToDrop, key)
-    end
-
-    HowToSunspire.AdvancedMeteorUI()
-    Hts_Comet:SetHidden(false)
-    PlaySound(SOUNDS.DUEL_START)
-
-    EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
-    EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "CometTimer", 100, HowToSunspire.AdvancedMeteorUI)
-end
-
-function HowToSunspire.AdvancedMeteorUI()
-    local currentTime = GetGameTimeMilliseconds()
-    local timer = cometTime - currentTime
-    local position
-
-    for key, value in pairs(posToDrop) do
-        if value == GetUnitDisplayName("player") then
-            position = key
-        end
-    end
-
-    local header, footer
-    if position == "right" then
-        header = ">>>>> "
-        footer = " >>>>>"
-    elseif position == "left" then
-        header = "<<<<< "
-        footer = " <<<<<"
-    elseif position == "back" then
-        header = "^^^^^ "
-        footer = " ^^^^^"
-    end
-
-    if timer >= 0 then
-        Hts_Comet_Label:SetText("|cf51414" .. header .. "Meteor: |r" .. tostring(string.format("%.1f", timer / 1000)) .. "|cf51414" .. footer .. "|r")
-    else
-        EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
-        Hts_Comet:SetHidden(true)
-    end
-end
+-- local listUserMeteor
+-- local cptUserMeteor
+-- local posToDrop = {}
+-- function HowToSunspire.AdvancedMeteor(_, result, _, _, _, _, _, _, targetName, targetType, hitValue, _, _, _, _, targetId, abilityId)
+--     if listUserMeteor == nil or cptUserMeteor >= 3 then
+--         listUserMeteor = {}
+--         cptUserMeteor = 0
+--     end
+--
+--     --[[if targetId and HowToSunspire.groupMembers[targetId] and HowToSunspire.groupMembers[targetId].tag then
+--         cptUserMeteor = cptUserMeteor + 1
+--         cometTime = GetGameTimeMilliseconds() + hitValue
+--         listUserMeteor[HowToSunspire.groupMembers[targetId].name] = GetGroupMemberSelectedRole(HowToSunspire.groupMembers[targetId].tag)
+--         d("Test 1")
+--     end]]
+--
+--     for key, value in pairs(HowToSunspire.groupMembers) do
+--         if value.name == targetName then
+--             listUserMeteor[targetName] = GetGroupMemberSelectedRole(value.tag)
+--             cptUserMeteor = cptUserMeteor + 1
+--             cometTime = GetGameTimeMilliseconds() + hitValue
+--         end
+--     end
+--
+--     if cptUserMeteor < 3 then return end
+--     d("Test 2")
+--     local retour = true
+--     posToDrop = {
+--         ["right"] = nil,
+--         ["back"]  = nil,
+--         ["left"]  = nil
+--     }
+--     --Priority is for the statues tank
+--     for key, value in spairs(listUserMeteor) do
+--         if key == sV.nameStatuesTank then
+--             posToDrop.back = key
+--         end
+--         if key == GetUnitDisplayName("player") then
+--             retour = false
+--         end
+--     end
+--     --if player isnt part of the players with meteor on him
+--     if retour then return end
+--     --Then for the main tank
+--     for key, value in spairs(listUserMeteor) do
+--         if key == sV.nameMainTank then
+--             posToDrop = fillPosToDrop(posToDrop, key)
+--         end
+--     end
+--     --Then for the kite heal
+--     for key, value in spairs(listUserMeteor) do
+--         if key == sV.nameKiteHeal then
+--             posToDrop = fillPosToDrop(posToDrop, key)
+--         end
+--     end
+--     --Then come other tanks and heals
+--     for key, value in spairs(listUserMeteor) do
+--         if value == LFG_ROLE_HEAL or value == LFG_ROLE_TANK then
+--             posToDrop = fillPosToDrop(posToDrop, key)
+--         end
+--     end
+--     --Then the dds
+--     for key, value in spairs(listUserMeteor) do
+--         posToDrop = fillPosToDrop(posToDrop, key)
+--     end
+--
+--     HowToSunspire.AdvancedMeteorUI()
+--     Hts_Comet:SetHidden(false)
+--     PlaySound(SOUNDS.DUEL_START)
+--
+--     EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
+--     EVENT_MANAGER:RegisterForUpdate(HowToSunspire.name .. "CometTimer", 100, HowToSunspire.AdvancedMeteorUI)
+-- end
+--
+-- function HowToSunspire.AdvancedMeteorUI()
+--     local currentTime = GetGameTimeMilliseconds()
+--     local timer = cometTime - currentTime
+--     local position
+--
+--     for key, value in pairs(posToDrop) do
+--         if value == GetUnitDisplayName("player") then
+--             position = key
+--         end
+--     end
+--
+--     local header, footer
+--     if position == "right" then
+--         header = ">>>>> "
+--         footer = " >>>>>"
+--     elseif position == "left" then
+--         header = "<<<<< "
+--         footer = " <<<<<"
+--     elseif position == "back" then
+--         header = "^^^^^ "
+--         footer = " ^^^^^"
+--     end
+--
+--     if timer >= 0 then
+--         Hts_Comet_Label:SetText("|cf51414" .. header .. "Meteor: |r" .. tostring(string.format("%.1f", timer / 1000)) .. "|cf51414" .. footer .. "|r")
+--     else
+--         EVENT_MANAGER:UnregisterForUpdate(HowToSunspire.name .. "CometTimer")
+--         Hts_Comet:SetHidden(true)
+--     end
+-- end
 
 ------------------------
 ---- LAST DOWNSTAIR ----

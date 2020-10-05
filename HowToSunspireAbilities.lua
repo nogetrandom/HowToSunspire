@@ -11,7 +11,7 @@ HowToSunspire.AbilitiesToTrack = {
 
     [117075] = HowToSunspire.ShieldCharge, --shield charge from 1H & Shield
     [116836] = HowToSunspire.Leap, --2H adds leap -- [116915] = HowToSunspire.Leap,[116916] = HowToSunspire.Leap, [116918] = HowToSunspire.Leap,
-    --[[ TODO : Add tear and breathes
+    --[[ TODO : Add tear and breaths
     [117526] = HowToSunspire.Tear, -- Soul tear
     [119283] = HowToSunspire.Frost, -- Frost Breath
     [121723] = HowToSunspire.Fire, -- Fire Breath
