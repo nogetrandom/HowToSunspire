@@ -2,7 +2,7 @@
 	<Layer name="SI_KEYBINDINGS_LAYER_GENERAL">
 		<Category name="HowToSunspire">
 			<Action name="RESET_STUCK_AUDIO">
-				<Down>HowToSunspire.AudioToggle()</Down>
+				<Down>HowToSunspire.AudioReset()</Down>
 			</Action>
 		</Category>
 	</Layer>
